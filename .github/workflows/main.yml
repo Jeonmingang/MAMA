@@ -1,0 +1,19 @@
+name: build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+          cache: maven
+      - name: Build
+        run: mvn -B -DskipTests clean package
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: SamSkyBridge
+          path: target/*.jar
