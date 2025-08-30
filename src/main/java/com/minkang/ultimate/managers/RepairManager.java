@@ -40,7 +40,7 @@ public class RepairManager implements Listener {
         FileConfiguration c = plugin.getConfig();
         ItemStack it = template.clone();
         it.setAmount(Math.max(1, qty));
-        ItemMeta meta = it.getItemMeta();
+        
         meta.setDisplayName(Texts.color(c.getString("repairticket.name","&b[수리권]")));
         List<String> lore = new ArrayList<String>();
         for(String s: c.getStringList("repairticket.lore")) lore.add(Texts.color(s));
