@@ -1,0 +1,67 @@
+name: UltimateServerPlugin
+main: com.minkang.ultimate.Main
+version: 1.0.0
+api-version: 1.16
+author: MinGang
+softdepend: [Vault, Essentials]
+commands:
+  배틀종료:
+    description: Pixelmon /endbattle 실행
+    permission: usp.battle
+  돈:
+    description: 잔액/송금/순위 한글 래퍼
+    usage: "/돈, /돈 보내기 <닉> <금액>, /돈 순위"
+    permission: usp.money
+  수표:
+    description: 커스텀 수표 발급
+    usage: "/수표 <금액> <수량>"
+    permission: usp.banknote.give
+  수리권:
+    description: 수리권 발급
+    usage: "/수리권 발급 <수량>"
+    permission: usp.repair.give
+  거래:
+    description: 거래 시스템
+    usage: "/거래 <플레이어> | /거래 수락 <플레이어> | /거래 거절 <플레이어>"
+    permission: usp.trade
+  상점:
+    description: 상점 생성/추가/삭제/열기/목록
+    usage: "/상점 생성 <이름> | /상점 추가 <이름> <슬롯> <가격> | /상점 삭제 <이름> <슬롯> | /상점 열기 <이름> | /상점 목록"
+    permission: usp.shop
+  상점리로드:
+    description: 상점/설정 리로드
+    permission: usp.shop.admin
+  잠금:
+    description: 잠금 관리 (시간/영구/추가/목록/해제)
+    usage: "/잠금 <시간|영구|추가|목록|해제> [...]"
+    permission: usp.lock
+  잠금권:
+    description: 잠금권 발급
+    usage: "/잠금권 발급 <수량>"
+    permission: usp.lock.give
+  알걸음:
+    description: Pixelmon 알 걸음수(/eggsteps) 한글 래퍼
+    usage: "/알걸음 <1~6>"
+    permission: usp.pixelmon
+  개체값:
+    description: Pixelmon 개체값(/ivs) 한글 래퍼
+    usage: "/개체값 <1~6>"
+    permission: usp.pixelmon
+  노력치:
+    description: Pixelmon 노력치(/evs) 한글 래퍼
+    usage: "/노력치 <1~6>"
+    permission: usp.pixelmon
+permissions:
+  usp.*:
+    default: op
+    children:
+      usp.battle: true
+      usp.money: true
+      usp.banknote.give: true
+      usp.repair.give: true
+      usp.trade: true
+      usp.shop: true
+      usp.shop.admin: true
+      usp.lock: true
+      usp.lock.give: true
+      usp.pixelmon: true
