@@ -1,6 +1,7 @@
 
 package com.minkang.ultimate.managers;
 
+import org.bukkit.inventory.meta.ItemMeta;
 import com.minkang.ultimate.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

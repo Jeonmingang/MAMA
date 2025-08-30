@@ -52,29 +52,40 @@ public class RepairManager implements Listener {
     }
 
     @EventHandler
-    public void onUse(PlayerInteractEvent e){
-        ItemStack hand = e.getItem();
-        if (hand==null || !hand.hasItemMeta()) return;
-        ItemMeta meta = hand.getItemMeta();
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        if (!pdc.has(key, PersistentDataType.INTEGER)) return;
-        e.setCancelled(true);
+    public void onUse(PlayerInteractEvent e) 
+{
+        if (e.getItem() == null) return;
+        ItemStack ticket = e.getItem();
+        if (!ticket.hasItemMeta()) return;
+        org.bukkit.inventory.meta.ItemMeta tMeta = ticket.getItemMeta();
+        org.bukkit.persistence.PersistentDataContainer pdc = tMeta.getPersistentDataContainer();
+        if (!pdc.has(this.key, org.bukkit.persistence.PersistentDataType.INTEGER)) return;
 
-        Player p = e.getPlayer();
-        ItemStack target = p.getInventory().getItemInMainHand();
-        if (target==null || !target.hasItemMeta() || !(target.getItemMeta() instanceof Damageable)) {
-            p.sendMessage("§c손에 든 수리 가능한 아이템이 필요합니다.");
+        e.setCancelled(true);
+        Player player = e.getPlayer();
+
+        ItemStack inHand = player.getInventory().getItemInMainHand();
+        if (inHand == null || inHand.getType() == Material.AIR) {
+            player.sendMessage("§c손에 든 수리 가능한 아이템이 필요합니다.");
             return;
         }
-        ItemMeta meta = target.getItemMeta();
-if (meta instanceof Damageable) {
-    Damageable dmg = (Damageable) meta;
-    dmg.setDamage(0);
+
+        ItemMeta meta = inHand.getItemMeta();
+        if (!(meta instanceof Damageable)) {
+            player.sendMessage("§c수리 불가 아이템입니다.");
+            return;
+        }
+
+        Damageable dmg = (Damageable) meta;
+        dmg.setDamage(0);
+        inHand.setItemMeta(meta);
+
+        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1f, 1.2f);
+        player.sendMessage("§b수리권 사용: 아이템이 수리되었습니다.");
+
+        // consume one ticket
+        if (ticket.getAmount() <= 1) player.getInventory().setItemInMainHand(null);
+        else ticket.setAmount(ticket.getAmount() - 1);
 }
-target.setItemMeta(meta);
-        p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1f, 1.2f);
-        p.sendMessage("§b수리권 사용: 아이템이 수리되었습니다.");
-        if (hand.getAmount()<=1) p.getInventory().setItemInOffHand(null);
-        else hand.setAmount(hand.getAmount()-1);
-    }
+
 }
