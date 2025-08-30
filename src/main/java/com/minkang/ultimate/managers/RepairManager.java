@@ -66,9 +66,12 @@ public class RepairManager implements Listener {
             p.sendMessage("§c손에 든 수리 가능한 아이템이 필요합니다.");
             return;
         }
-        Damageable dmg = (Damageable) target.getItemMeta();
-        dmg.setDamage(0);
-        target.setItemMeta(dmg);
+        ItemMeta meta = target.getItemMeta();
+if (meta instanceof Damageable) {
+    Damageable dmg = (Damageable) meta;
+    dmg.setDamage(0);
+}
+target.setItemMeta(meta);
         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1f, 1.2f);
         p.sendMessage("§b수리권 사용: 아이템이 수리되었습니다.");
         if (hand.getAmount()<=1) p.getInventory().setItemInOffHand(null);
