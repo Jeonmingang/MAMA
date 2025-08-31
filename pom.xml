@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.minkang</groupId>
   <artifactId>UltimateServerPlugin2</artifactId>
-  <version>1.4.6</version>
+  <version>1.4.7</version>
   <name>UltimateServerPlugin2</name>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -58,23 +58,10 @@
       </plugin>
     </plugins>
   </build>
-
 <repositories>
-    <repository>
-      <id>citizens-repo</id>
-      <url>https://repo.citizensnpcs.co/</url>
-    </repository>
-    <repository>
-      <id>spigot-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-    </repository>
-    <repository>
-      <id>sonatype</id>
-      <url>https://oss.sonatype.org/content/groups/public/</url>
-    </repository>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
+    <repository><id>citizens-repo</id><url>https://repo.citizensnpcs.co/</url></repository>
+    <repository><id>spigot-repo</id><url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url></repository>
+    <repository><id>sonatype</id><url>https://oss.sonatype.org/content/groups/public/</url></repository>
+    <repository><id>jitpack.io</id><url>https://jitpack.io</url></repository>
   </repositories>
 </project>
