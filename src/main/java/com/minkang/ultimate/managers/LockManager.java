@@ -3,13 +3,11 @@ package com.minkang.ultimate.managers;
 
 import com.minkang.ultimate.Main;
 import com.minkang.ultimate.utils.Texts;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class LockManager implements Listener {
     private final Main plugin;
@@ -43,7 +40,6 @@ public class LockManager implements Listener {
         save();
     }
 
-    /* ===================== Token ===================== */
     public ItemStack createToken(int qty){ return createToken(qty, "perm"); }
     public ItemStack createToken(int qty, String type){
         ItemStack it = new ItemStack(Material.matchMaterial(plugin.getConfig().getString("lock.item.material","TRIPWIRE_HOOK")));
@@ -51,7 +47,7 @@ public class LockManager implements Listener {
         ItemMeta m = it.getItemMeta();
         if (m != null) {
             m.setDisplayName(Texts.color(plugin.getConfig().getString("lock.item.name","&6[잠금권]")));
-            List<String> lore = new ArrayList<>();
+            List<String> lore = new ArrayList<String>();
             for(String s: plugin.getConfig().getStringList("lock.item.lore")) lore.add(Texts.color(s));
             lore.add(Texts.color("&7종류: ")+("perm".equalsIgnoreCase(type)?"&a영구":"&e시간"));
             m.setLore(lore);
@@ -63,24 +59,12 @@ public class LockManager implements Listener {
         return it;
     }
 
-    /* ===================== Helpers ===================== */
-    private UUID safeUUID(Object o){
-        try{
-            if (o==null) return null;
-            String s = String.valueOf(o).trim();
-            if (s.isEmpty() || "null".equalsIgnoreCase(s)) return null;
-            return UUID.fromString(s);
-        } catch (Exception ex){ return null; }
-    }
     private String keyOf(Block b){
         World w = b.getWorld();
         return w.getName()+";"+b.getX()+";"+b.getY()+";"+b.getZ();
     }
-    private void save(){
-        try{ conf.save(file); } catch (IOException ignored){}
-    }
+    private void save(){ try{ conf.save(file); } catch (IOException ignored){} }
 
-    /* ===================== Public ops ===================== */
     public void protectPerm(Block b, Player p){
         String k = keyOf(b);
         if (conf.contains("locks."+k)) { p.sendMessage("§c이미 잠금된 블록입니다."); return; }
@@ -103,8 +87,9 @@ public class LockManager implements Listener {
     public void addMember(Block b, OfflinePlayer op){
         String k = keyOf(b);
         List<String> list = conf.getStringList("locks."+k+".allowed");
-        if (!list.contains(op.getUniqueId().toString())){
-            list.add(op.getUniqueId().toString());
+        String id = op.getUniqueId().toString();
+        if (!list.contains(id)){
+            list.add(id);
             conf.set("locks."+k+".allowed", list);
             save();
         }
@@ -122,7 +107,6 @@ public class LockManager implements Listener {
         p.sendMessage("§7총 §f"+cnt+"§7개");
     }
 
-    /* ===================== Event: perm token quick use ===================== */
     @EventHandler
     public void onUse(PlayerInteractEvent e){
         if (e.getHand()!=EquipmentSlot.HAND) return;
@@ -136,9 +120,8 @@ public class LockManager implements Listener {
             e.getPlayer().sendMessage("§7시간권은 §f/잠금 시간 <분> §7으로 사용하세요."); return;
         }
         // whitelist
-        Material type = e.getClickedBlock().getType();
         List<String> whitelist = plugin.getConfig().getStringList("lock.allowed-blocks");
-        if (!whitelist.isEmpty() && !whitelist.contains(type.name())) return;
+        if (!whitelist.isEmpty() && !whitelist.contains(e.getClickedBlock().getType().name())) return;
 
         e.setCancelled(true);
         Player p = e.getPlayer();
@@ -150,7 +133,6 @@ public class LockManager implements Listener {
         conf.set("locks."+k+".expiresAt", -1L);
         save();
         p.sendMessage("§a잠금 완료!(영구)");
-        // consume
         if (hand.getAmount()<=1) e.getPlayer().getInventory().setItemInMainHand(null); else hand.setAmount(hand.getAmount()-1);
     }
 }
