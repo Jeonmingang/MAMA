@@ -1,3 +1,4 @@
+
 package com.minkang.usp2.managers;
 
 import com.minkang.usp2.Main;
@@ -18,27 +19,48 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class TradeManager implements Listener {
+
     private final Main plugin;
-    // target -> requester
+    /** trade request: targetUUID -> requesterUUID */
     private final Map<UUID, UUID> pending = new HashMap<>();
-    // player -> session
+    /** active sessions indexed by each player's UUID */
     private final Map<UUID, TradeSession> sessions = new HashMap<>();
 
-    public TradeManager(Main plugin){ this.plugin = plugin; }
-
-    // ===== Requests =====
-    public void request(Player from, Player to){
-        pending.put(to.getUniqueId(), from.getUniqueId());
-        from.sendMessage("§e거래 요청을 보냈습니다: §f"+to.getName());
-        to.sendMessage("§e"+from.getName()+"§7 가 거래를 요청했습니다: §a/거래 수락 §7또는 §c/거래 취소");
-        // expire after 10s
+    public TradeManager(Main plugin){
+        this.plugin = plugin;
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+        // Clean up stray sessions on reload after a short delay
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            UUID req = pending.remove(to.getUniqueId());
-            if (req != null) {
-                from.sendMessage("§7거래 요청이 시간초과되었습니다.");
-                to.sendMessage("§7거래 요청이 만료되었습니다.");
+            for (TradeSession s : new HashSet<>(sessions.values())) {
+                s.cancel("서버 리로드");
             }
+            sessions.clear();
         }, 200L);
+    }
+
+    /** Send a request from 'from' to 'target' */
+    public void request(Player from, Player target){
+        if (from.getUniqueId().equals(target.getUniqueId())){
+            from.sendMessage("§c자기 자신과는 거래할 수 없습니다.");
+            return;
+        }
+        if (sessions.containsKey(from.getUniqueId()) || sessions.containsKey(target.getUniqueId())){
+            from.sendMessage("§c이미 진행 중인 거래가 있습니다.");
+            return;
+        }
+        pending.put(target.getUniqueId(), from.getUniqueId());
+        from.sendMessage("§a" + target.getName() + "§7에게 거래 요청을 보냈습니다.");
+        target.sendMessage("§e" + from.getName() + "§7님이 거래를 요청했습니다. §a/거래 수락 §7또는 §c/거래 거절");
+        target.playSound(target.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 1.2f);
+    }
+
+    public void open(Player a, Player b){
+        TradeSession s = new TradeSession(a, b);
+        sessions.put(a.getUniqueId(), s);
+        sessions.put(b.getUniqueId(), s);
+        s.open();
+        a.playSound(a.getLocation(), Sound.BLOCK_CHEST_OPEN, 0.6f, 1.1f);
+        b.playSound(b.getLocation(), Sound.BLOCK_CHEST_OPEN, 0.6f, 1.1f);
     }
 
     public boolean accept(Player target){
@@ -50,56 +72,22 @@ public class TradeManager implements Listener {
         return true;
     }
 
-    public void cancel(String reason){
-            if (finished) { return; }
-            finished = true;
-            java.util.function.BiConsumer<Player, Integer> back = (pl, slotIdx) -> {
-                org.bukkit.inventory.ItemStack it = inv.getItem(slotIdx);
-                if (it != null){
-                    java.util.Map<Integer, org.bukkit.inventory.ItemStack> left = pl.getInventory().addItem(it);
-                    for (org.bukkit.inventory.ItemStack rem: left.values()) pl.getWorld().dropItemNaturally(pl.getLocation(), rem);
-                    inv.setItem(slotIdx, null);
-                }
-            };
-            for (int sIdx : aSlots){ back.accept(a, sIdx); }
-            for (int sIdx : bSlots){ back.accept(b, sIdx); }
-            a.sendMessage("§c거래 취소: §7"+reason);
-            b.sendMessage("§c거래 취소: §7"+reason);
-            forceClose();
+    @EventHandler
+    public void onClick(InventoryClickEvent e){
+        try {
+            if (!(e.getWhoClicked() instanceof Player)) return;
+            Player p = (Player) e.getWhoClicked();
+            TradeSession s = sessions.get(p.getUniqueId());
+            if (s==null || e.getView().getTopInventory()!=s.inv) return;
+            e.setCancelled(true);
+            s.handleClick(p, e);
+        } catch (Throwable ex) {
+            e.setCancelled(true);
+            try { ((Player)e.getWhoClicked()).sendMessage("§c거래 오류: 이벤트가 취소되었습니다."); } catch (Throwable ignore) {}
         }
-
-    // ===== Session =====
-    private void open(Player a, Player b){
-        // close existing if any
-        cancel(a); cancel(b);
-        TradeSession s = new TradeSession(a, b);
-        sessions.put(a.getUniqueId(), s);
-        sessions.put(b.getUniqueId(), s);
-        s.open();
-    }
-
-    public void closeAll(){
-        for (TradeSession s: new HashSet<>(sessions.values())) s.forceClose();
-        sessions.clear();
-        pending.clear();
     }
 
     @EventHandler
-public void onClick(InventoryClickEvent e){
-    try {
-        if (!(e.getWhoClicked() instanceof Player)) return;
-        Player p = (Player) e.getWhoClicked();
-        TradeSession s = sessions.get(p.getUniqueId());
-        if (s==null || e.getView().getTopInventory()!=s.inv) return;
-        e.setCancelled(true);
-        s.handleClick(p, e);
-    } catch (Throwable ex) {
-        e.setCancelled(true);
-        try { ((Player)e.getWhoClicked()).sendMessage("§c거래 오류: 이벤트가 취소되었습니다."); } catch (Throwable ignore) {}
-    }
-}
-
-@EventHandler
     public void onClose(InventoryCloseEvent e){
         if (!(e.getPlayer() instanceof Player)) return;
         Player p = (Player)e.getPlayer();
@@ -114,7 +102,6 @@ public void onClick(InventoryClickEvent e){
         boolean aReady=false, bReady=false;
         final int[] aSlots, bSlots;
         final int aAccept=45, bAccept=53;
-        boolean finished=false;
         boolean finished=false;
 
         TradeSession(Player a, Player b){
@@ -167,99 +154,74 @@ public void onClick(InventoryClickEvent e){
             int raw = e.getRawSlot();
             ClickType type = e.getClick();
             // Accept buttons
-            if (raw==aAccept || raw==bAccept){
-                if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
-                    aReady = !aReady; inv.setItem(aAccept, button(Material.LIME_TERRACOTTA, aReady?"§2내 수락 완료":"§a내 수락"));
-                } else if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
-                    bReady = !bReady; inv.setItem(bAccept, button(Material.LIME_TERRACOTTA, bReady?"§2상대 수락 완료":"§a상대 수락"));
-                }
-                a.playSound(a.getLocation(), Sound.UI_BUTTON_CLICK,1,1);
-                b.playSound(b.getLocation(), Sound.UI_BUTTON_CLICK,1,1);
-                if (aReady && bReady) { finalizeTrade(); }
+            if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
+                aReady = !aReady;
+                inv.setItem(aAccept, button(aReady?Material.RED_TERRACOTTA:Material.LIME_TERRACOTTA, aReady?"§c내 수락 해제":"§a내 수락"));
+                return;
+            }
+            if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
+                bReady = !bReady;
+                inv.setItem(bAccept, button(bReady?Material.RED_TERRACOTTA:Material.LIME_TERRACOTTA, bReady?"§c상대 수락 해제":"§a상대 수락"));
                 return;
             }
 
-            // Player inventory shift-click -> move to own trade area
-            int topSize = e.getInventory().getSize();
-            if (raw >= topSize){
-                if (type == ClickType.SHIFT_LEFT || type == ClickType.SHIFT_RIGHT){
-                    ItemStack cur = e.getCurrentItem();
-                    if (cur != null && cur.getType()!=Material.AIR){
-                        int dst = firstEmptySlot(p);
-                        if (dst != -1){
-                            inv.setItem(dst, cur.clone());
-                            if (e.getClickedInventory()!=null) {
-                                e.getClickedInventory().setItem(e.getSlot(), null);
-                            } else {
-                                p.getInventory().removeItem(cur);
-                            }
-                            resetReady();
-                        }
-                    }
-                }
-                return;
-            }
-
-            // Trade area click
-            if (!isMySlot(p, raw)) return;
-
-            ItemStack cursor = e.getCursor();
-            ItemStack slot = inv.getItem(raw);
-
-            if (cursor != null && cursor.getType() != Material.AIR){
-                // Place or merge/swap
-                if (slot == null){
-                    inv.setItem(raw, cursor.clone());
-                    e.getView().setCursor(null);
-                } else if (slot.isSimilar(cursor) && slot.getAmount() < slot.getMaxStackSize()){
-                    int can = Math.min(cursor.getAmount(), slot.getMaxStackSize() - slot.getAmount());
-                    slot.setAmount(slot.getAmount() + can);
-                    cursor.setAmount(cursor.getAmount() - can);
-                    inv.setItem(raw, slot);
-                    if (cursor.getAmount() <= 0) e.getView().setCursor(null);
-                    else e.getView().setCursor(cursor);
-                } else {
-                    inv.setItem(raw, cursor.clone());
-                    e.getView().setCursor(slot);
-                }
+            // Move items within own area or from player inventory
+            if (raw < 54){
+                // clicks inside top
+                if (!isMySlot(p, raw)) return;
                 resetReady();
                 return;
             } else {
-                // Pick up from slot
-                if (slot != null){
-                    e.getView().setCursor(slot);
-                    inv.setItem(raw, null);
-                    resetReady();
-                }
+                // bottom inventory clicks: pickup to first empty slot
+                ItemStack cursor = e.getCurrentItem();
+                if (cursor == null || cursor.getType()==Material.AIR) return;
+                int dst = firstEmptySlot(p);
+                if (dst < 0){ p.sendMessage("§c자신의 거래 슬롯이 가득 찼습니다."); return; }
+                inv.setItem(dst, cursor.clone());
+                e.getView().getBottomInventory().setItem(e.getSlot(), null);
+                resetReady();
+            }
+
+            // If both ready, finalize
+            if (aReady && bReady){
+                finish();
             }
         }
 
-        void give(Player to, List<ItemStack> items){
-            for (ItemStack it: items){
-                Map<Integer, ItemStack> left = to.getInventory().addItem(it);
-                for (ItemStack rem: left.values()) to.getWorld().dropItemNaturally(to.getLocation(), rem);
-            }
-        }
+        void finish(){
+            if (finished) return;
+            finished = true;
 
-        void finalizeTrade(){
-            if (finished) return;
-            finished = true;
-            if (finished) return;
-            finished = true;
-            List<ItemStack> aItems = new ArrayList<>();
-            for (int s : aSlots){ ItemStack it = inv.getItem(s); if (it!=null) { aItems.add(it); inv.setItem(s,null);} }
-            List<ItemStack> bItems = new ArrayList<>();
-            for (int s : bSlots){ ItemStack it = inv.getItem(s); if (it!=null) { bItems.add(it); inv.setItem(s,null);} }
-            give(b, aItems);
-            give(a, bItems);
+            // Transfer items: A -> B, B -> A
+            for (int s : aSlots){
+                ItemStack it = inv.getItem(s);
+                if (it!=null) b.getInventory().addItem(it);
+                inv.setItem(s, null);
+            }
+            for (int s : bSlots){
+                ItemStack it = inv.getItem(s);
+                if (it!=null) a.getInventory().addItem(it);
+                inv.setItem(s, null);
+            }
             a.sendMessage("§a거래 완료!");
             b.sendMessage("§a거래 완료!");
             forceClose();
         }
 
         void cancel(String reason){
-            for (int s : aSlots){ ItemStack it = inv.getItem(s); if (it!=null) a.getInventory().addItem(it); }
-            for (int s : bSlots){ ItemStack it = inv.getItem(s); if (it!=null) b.getInventory().addItem(it); }
+            if (finished) { return; }
+            finished = true;
+            // return items back to each owner
+            java.util.function.BiConsumer<Player, Integer> back = (pl, slotIdx) -> {
+                ItemStack it = inv.getItem(slotIdx);
+                if (it != null) {
+                    Map<Integer, ItemStack> overflow = pl.getInventory().addItem(it);
+                    if (!overflow.isEmpty()) for (ItemStack rem : overflow.values()) pl.getWorld().dropItemNaturally(pl.getLocation(), rem);
+                    inv.setItem(slotIdx, null);
+                }
+            };
+            for (int s : aSlots) back.accept(a, s);
+            for (int s : bSlots) back.accept(b, s);
             a.sendMessage("§c거래 취소: §7"+reason);
             b.sendMessage("§c거래 취소: §7"+reason);
             forceClose();

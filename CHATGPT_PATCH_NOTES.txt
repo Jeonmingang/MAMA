@@ -1,0 +1,2 @@
+
+2025-08-31: Rewrote com.minkang.usp2.managers.TradeManager to correct scope errors and add robust TradeSession.
