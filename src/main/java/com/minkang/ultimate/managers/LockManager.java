@@ -389,4 +389,15 @@ public class LockManager implements Listener {
         if (in.getAmount() <= 1) p.getInventory().setItemInMainHand(null);
         else in.setAmount(in.getAmount()-1);
     }
+
+    // === Admin: create time lock tickets ===
+    public org.bukkit.inventory.ItemStack createToken(int qty){
+        org.bukkit.inventory.ItemStack it = new org.bukkit.inventory.ItemStack(org.bukkit.Material.PAPER, Math.max(1, qty));
+        org.bukkit.inventory.meta.ItemMeta meta = it.getItemMeta();
+        meta.setDisplayName(org.bukkit.ChatColor.AQUA + "시간잠금권");
+        meta.getPersistentDataContainer().set(KEY_TEMP, org.bukkit.persistence.PersistentDataType.BYTE, (byte)1);
+        it.setItemMeta(meta);
+        return it;
+    }
+
 }
