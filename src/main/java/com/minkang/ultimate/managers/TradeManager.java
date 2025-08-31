@@ -54,16 +54,7 @@ public class TradeManager implements Listener {
         target.playSound(target.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 1.2f);
     }
 
-    public void open(Player a, Player b){
-        TradeSession s = new TradeSession(a, b);
-        sessions.put(a.getUniqueId(), s);
-        sessions.put(b.getUniqueId(), s);
-        s.open();
-        a.playSound(a.getLocation(), Sound.BLOCK_CHEST_OPEN, 0.6f, 1.1f);
-        b.playSound(b.getLocation(), Sound.BLOCK_CHEST_OPEN, 0.6f, 1.1f);
-    }
-
-    public boolean accept(Player target){
+        public boolean accept(Player target){
         UUID req = pending.remove(target.getUniqueId());
         if (req == null) return false;
         Player from = Bukkit.getPlayer(req);
