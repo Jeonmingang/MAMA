@@ -59,8 +59,6 @@ public class Main extends JavaPlugin {
         try { getCommand("잠금").setExecutor(new LockCommand(this));
         getCommand("잠금권").setExecutor(new LockTokenCommand(this));
         PixelmonAliasCommand stats = new PixelmonAliasCommand();
-        try { getCommand("개체값").setExecutor(stats);
-        try { getCommand("노력치").setExecutor(stats);
 try { getCommand("야투").setExecutor(new NightVisionCommand());
         getLogger().info("UltimateServerPlugin enabled.");
     }
