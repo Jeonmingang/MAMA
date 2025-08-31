@@ -71,6 +71,23 @@ public class ShopManager implements Listener {
         conf.set("shops."+name+".title", name);
         save();
     }
+
+    private int nextEmptySlot(String name){
+        for (int i=0;i<54;i++){
+            if (!conf.isConfigurationSection("shops."+name+".items."+i)) return i;
+        }
+        return -1;
+    }
+
+    public void addItemAuto(Player p, String name, double price, boolean enableBuy, boolean enableSell){
+        int slot = nextEmptySlot(name);
+        if (slot < 0){ p.sendMessage("§c상점 슬롯이 가득 찼습니다."); return; }
+        addItem(p, name, slot, price);
+        conf.set("shops."+name+".items."+slot+".buy", enableBuy);
+        conf.set("shops."+name+".items."+slot+".sell", enableSell);
+        save();
+        p.sendMessage("§7옵션: §f구매 " + (enableBuy?"§a가능":"§c불가") + "§7, 판매 " + (enableSell?"§a가능":"§c불가"));
+    }
     public void removeItem(String name, int slot){
         conf.set("shops."+name+".items."+slot, null); save();
     }
@@ -110,9 +127,9 @@ public class ShopManager implements Listener {
                     ItemStack it = new ItemStack(Material.matchMaterial(mat), Math.max(1, amount));
                     ItemMeta m = it.getItemMeta();
                     List<String> lore = new ArrayList<>();
-                    lore.add("§7구매가: §a$"+price);
-                    lore.add("§7좌클릭=구매  /  쉬프트+좌클릭=64개");
-                    lore.add("§7우클릭=판매  /  쉬프트+우클릭=64개");
+                    lore.add("§7가격: §a$"+price);
+                    if (conf.getBoolean("shops."+name+".items."+k+".buy", true)) lore.add("§7좌클릭=구매  /  쉬프트+좌클릭=64개");
+                    if (conf.getBoolean("shops."+name+".items."+k+".sell", true)) lore.add("§7우클릭=판매  /  쉬프트+우클릭=64개");
                     if (m!=null){
                         if (conf.isString("shops."+name+".items."+k+".name")) m.setDisplayName(conf.getString("shops."+name+".items."+k+".name"));
                         m.setLore(lore); it.setItemMeta(m);
@@ -154,14 +171,14 @@ public class ShopManager implements Listener {
 
         int totalItems = bundle * bundles;
 
-        if (buy){
+        if (buy){ if (!conf.getBoolean("shops."+shop+".items."+slot+".buy", true)) { p.sendMessage("§c이 품목은 구매가 불가능합니다."); return; }
             double totalPrice = price * bundles;
             if (!plugin.eco().withdraw(p, totalPrice)){ p.sendMessage("§c잔액이 부족합니다."); return; }
             ItemStack give = new ItemStack(it.getType(), totalItems);
             Map<Integer, ItemStack> left = p.getInventory().addItem(give);
             for (ItemStack rem: left.values()) p.getWorld().dropItemNaturally(p.getLocation(), rem);
             p.sendMessage("§a구매: §f"+it.getType().name()+" x"+totalItems+" §7(§a$"+totalPrice+"§7)");
-        } else if (sell){
+        } else if (sell){ if (!conf.getBoolean("shops."+shop+".items."+slot+".sell", true)) { p.sendMessage("§c이 품목은 판매가 불가능합니다."); return; }
             // Count player's items of this type
             int have = 0;
             for (ItemStack invIt : p.getInventory().getContents()){

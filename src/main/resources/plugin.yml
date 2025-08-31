@@ -11,7 +11,7 @@ commands:
 
   돈:
     description: 잔액/송금/순위
-    permission: usp.money
+    aliases: [balance, bal]
 
   수표:
     description: 수표 발급(소지금 차감, 무권한)

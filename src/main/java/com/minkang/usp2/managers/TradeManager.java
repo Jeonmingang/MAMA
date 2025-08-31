@@ -168,21 +168,23 @@ class TradeSession {
             if (bReady){ bReady=false; inv.setItem(bAccept, button(Material.LIME_TERRACOTTA,"§a상대 수락")); }
         }
 
+        
         void handleClick(Player p, InventoryClickEvent e){
             int raw = e.getRawSlot();
             ClickType type = e.getClick();
             // Accept buttons
             if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
                 aReady = !aReady;
-                inv.setItem(aAccept, button(aReady?Material.RED_TERRACOTTA:Material.LIME_TERRACOTTA, aReady?"§c내 수락 해제":"§a내 수락"));
+                inv.setItem(aAccept, button(aReady ? Material.RED_TERRACOTTA : Material.LIME_TERRACOTTA, aReady ? "§c내 수락 해제" : "§a내 수락"));
+                if (aReady && bReady) { finish(); }
                 return;
             }
             if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
                 bReady = !bReady;
-                inv.setItem(bAccept, button(bReady?Material.RED_TERRACOTTA:Material.LIME_TERRACOTTA, bReady?"§c상대 수락 해제":"§a상대 수락"));
+                inv.setItem(bAccept, button(bReady ? Material.RED_TERRACOTTA : Material.LIME_TERRACOTTA, bReady ? "§c상대 수락 해제" : "§a상대 수락"));
+                if (aReady && bReady) { finish(); }
                 return;
             }
-
             // Move items within own area or from player inventory
             if (raw < 54){
                 // clicks inside top

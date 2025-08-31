@@ -66,6 +66,36 @@ public class ShopCommand implements CommandExecutor {
             return true;
         }
 
+        
+        // /상점 추가 <이름> <구매|판매> [판매] <가격>
+        if (a.length >= 3 && ("추가".equalsIgnoreCase(a[0]) || "add".equalsIgnoreCase(a[0]))){
+            if (!(s instanceof Player)) { s.sendMessage("플레이어만"); return true; }
+            Player p = (Player)s;
+            if (!p.isOp() && !p.hasPermission("usp.shop.admin")){
+                p.sendMessage("§c상점 생성 권한이 없습니다."); return true;
+            }
+            if (a.length < 4){
+                p.sendMessage("§7/상점 추가 <이름> <구매|판매> [판매] <가격>  §8(손에 든 아이템 등록)"); return true;
+            }
+            String name = a[1];
+            boolean buy = false, sell = false;
+            double price;
+            try { price = Double.parseDouble(a[a.length-1]); }
+            catch(Exception ex){ p.sendMessage("§c가격은 숫자여야 합니다."); return true; }
+            for (int i=2;i<a.length-1;i++){
+                String t = a[i];
+                if ("구매".equalsIgnoreCase(t) || "buy".equalsIgnoreCase(t)) buy = true;
+                if ("판매".equalsIgnoreCase(t) || "sell".equalsIgnoreCase(t)) sell = true;
+            }
+            if (!buy && !sell){
+                p.sendMessage("§c구매, 판매 중 하나 이상을 지정해야 합니다."); return true;
+            }
+            // 없으면 상점 생성
+            plugin.shop().createShop(name);
+            plugin.shop().addItemAuto(p, name, price, buy, sell);
+            return true;
+        }
+
         plugin.shop().open(p, a[0]); return true;
     }
 }
