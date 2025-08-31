@@ -20,7 +20,6 @@ public class PixelmonAliasCommand implements CommandExecutor {
         } else if (label.equalsIgnoreCase("노력치")) {
             forward = "evs" + (joined.isEmpty() ? "" : " " + joined);
         } else {
-            // Fallback: try pass-through to ivs/evs if player typed those via this executor somehow
             forward = label + (joined.isEmpty() ? "" : " " + joined);
         }
         p.performCommand(forward);
