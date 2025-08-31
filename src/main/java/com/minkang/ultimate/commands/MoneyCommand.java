@@ -1,4 +1,3 @@
-
 package com.minkang.ultimate.commands;
 
 import com.minkang.ultimate.Main;
@@ -12,24 +11,14 @@ public class MoneyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
-        
-if (a.length==0){
-    if (s instanceof Player){
-        Player p = (Player)s;
-        Double bal = plugin.eco().bal(p);
-        if (bal != null){
-            p.sendMessage("§e잔액: §f$" + ((long) Math.floor(bal)));
-        } else {
-            // fallback to /balance if Essentials present
-            p.performCommand("balance");
-        }
-    } else {
-        s.sendMessage("콘솔은 플레이어 잔액이 없습니다.");
-    }
-    return true;
-}
-
-            else s.sendMessage("/돈 순위 | /돈 보내기 <닉> <금액>");
+        // 무권한 사용 가능 (permission 체크 없음)
+        if (a.length==0){
+            // /돈 -> /balance 위임
+            if (s instanceof Player) {
+                ((Player)s).performCommand("balance");
+            } else {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "balance");
+            }
             return true;
         }
         if ("보내기".equalsIgnoreCase(a[0]) && a.length>=3){

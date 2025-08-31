@@ -203,3 +203,32 @@ public class ShopManager implements Listener {
         }
     }
 }
+
+
+    public void createOrUpdate(String name, boolean allowBuy, boolean allowSell, Double price){
+        // 기본 상점 설정 저장
+        org.bukkit.configuration.file.FileConfiguration conf = getConfig();
+        String base = "shops."+name+".";
+        conf.set(base+"buy", allowBuy);
+        conf.set(base+"sell", allowSell);
+        if (price != null) conf.set(base+"price", price);
+        saveConfig();
+    }
+
+    private org.bukkit.configuration.file.FileConfiguration getConfig(){
+        try {
+            java.lang.reflect.Method m = this.getClass().getDeclaredMethod("conf");
+            m.setAccessible(true);
+            return (org.bukkit.configuration.file.FileConfiguration)m.invoke(this);
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    private void saveConfig(){
+        try {
+            java.lang.reflect.Method m = this.getClass().getDeclaredMethod("save");
+            m.setAccessible(true);
+            m.invoke(this);
+        } catch (Exception ignored){}
+    }

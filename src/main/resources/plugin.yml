@@ -1,6 +1,6 @@
 name: UltimateServerPlugin2
 main: com.minkang.usp2.Main
-version: 1.4.19
+version: 1.4.20
 api-version: 1.16
 author: MinGang
 softdepend: [Vault, Essentials, Citizens]
@@ -18,8 +18,6 @@ commands:
 
   수리권:
     description: 수리권 발급
-    permission: usp.repair.give
-
   상점:
     description: 상점 열기/관리/연동
 
@@ -31,8 +29,6 @@ commands:
 
   잠금권:
     description: 잠금권 발급(영구/시간)
-    permission: usp.lock.give
-
   야투:
     description: 야간투시 토글(무권한)
 

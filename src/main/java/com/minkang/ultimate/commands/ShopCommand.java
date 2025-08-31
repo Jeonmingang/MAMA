@@ -72,3 +72,27 @@ public class ShopCommand implements CommandExecutor {
 
 // 연동: /상점 연동 <상점이름> <엔피시>
 // Citizens가 설치되어 있으면 NPC 이름 또는 ID로 바인딩하여 클릭시 열리게 함
+
+
+private boolean handleAdd(CommandSender sender, String[] args){
+    if (args.length < 3){
+        sender.sendMessage("§e/상점 추가 <이름> <구매|판매> [가격]");
+        return true;
+    }
+    String name = args[1];
+    String mode = args[2];
+    Double price = null;
+    if (args.length >= 4){
+        try { price = Double.parseDouble(args[3]); } catch (Exception ignored){}
+    }
+    boolean buy = "구매".equalsIgnoreCase(mode);
+    boolean sell = "판매".equalsIgnoreCase(mode);
+    if (!buy && !sell){
+        sender.sendMessage("§c모드는 '구매' 또는 '판매'만 가능합니다.");
+        return true;
+    }
+    com.minkang.usp2.Main pl = com.minkang.usp2.Main.getPlugin(com.minkang.usp2.Main.class);
+    pl.shop().createOrUpdate(name, buy, sell, price);
+    sender.sendMessage("§a상점 등록/갱신: §f"+name+" §7("+mode+(price!=null? " 가격="+price:"")+")");
+    return true;
+}
