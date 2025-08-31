@@ -50,15 +50,24 @@ public class TradeManager implements Listener {
         return true;
     }
 
-    public void cancel(Player p){
-        // Cancel active session
-        TradeSession s = sessions.get(p.getUniqueId());
-        if (s != null) { s.cancel("플레이어가 취소했습니다."); return; }
-        // Or cancel pending request (either side)
-        pending.values().removeIf(u -> u.equals(p.getUniqueId()));
-        pending.remove(p.getUniqueId());
-        p.sendMessage("§7거래 요청/세션을 취소했습니다.");
-    }
+    public void cancel(String reason){
+            if (finished) { return; }
+            finished = true;
+            // Return items safely with overflow drop
+            java.util.function.BiConsumer<Player, Integer> back = (pl, slotIdx) -> {
+                org.bukkit.inventory.ItemStack it = inv.getItem(slotIdx);
+                if (it != null){
+                    java.util.Map<Integer, org.bukkit.inventory.ItemStack> left = pl.getInventory().addItem(it);
+                    for (org.bukkit.inventory.ItemStack rem: left.values()) pl.getWorld().dropItemNaturally(pl.getLocation(), rem);
+                    inv.setItem(slotIdx, null);
+                }
+            };
+            for (int sIdx : aSlots){ back.accept(a, sIdx); }
+            for (int sIdx : bSlots){ back.accept(b, sIdx); }
+            a.sendMessage("§c거래 취소: §7"+reason);
+            b.sendMessage("§c거래 취소: §7"+reason);
+            forceClose();
+        }
 
     // ===== Session =====
     private void open(Player a, Player b){
@@ -78,10 +87,11 @@ public class TradeManager implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e){
+            try {
         if (!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
         TradeSession s = sessions.get(p.getUniqueId());
-        if (s==null || e.getInventory()!=s.inv) return;
+        if (s==null || e.getView().getTopInventory()!=s.inv) return;
         e.setCancelled(true);
         s.handleClick(p, e);
     }
@@ -101,6 +111,7 @@ public class TradeManager implements Listener {
         boolean aReady=false, bReady=false;
         final int[] aSlots, bSlots;
         final int aAccept=45, bAccept=53;
+        boolean finished=false;
 
         TradeSession(Player a, Player b){
             this.a=a; this.b=b;
@@ -173,7 +184,11 @@ public class TradeManager implements Listener {
                         int dst = firstEmptySlot(p);
                         if (dst != -1){
                             inv.setItem(dst, cur.clone());
-                            e.getInventory().setItem(raw, null);
+                            if (e.getClickedInventory()!=null) {
+                                e.getClickedInventory().setItem(e.getSlot(), null);
+                            } else {
+                                p.getInventory().removeItem(cur);
+                            }
                             resetReady();
                         }
                     }
@@ -223,6 +238,8 @@ public class TradeManager implements Listener {
         }
 
         void finalizeTrade(){
+            if (finished) return;
+            finished = true;
             List<ItemStack> aItems = new ArrayList<>();
             for (int s : aSlots){ ItemStack it = inv.getItem(s); if (it!=null) { aItems.add(it); inv.setItem(s,null);} }
             List<ItemStack> bItems = new ArrayList<>();
