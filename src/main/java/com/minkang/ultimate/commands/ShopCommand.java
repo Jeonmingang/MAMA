@@ -43,7 +43,7 @@ public class ShopCommand implements CommandExecutor {
         if ("열기".equalsIgnoreCase(a[0]) && a.length>=2){ plugin.shop().open(p, a[1]); return true; }
         if ("목록".equalsIgnoreCase(a[0])){ plugin.shop().list(p); return true; }
 
-        if ("연동(비활성화)".equalsIgnoreCase(a[0]) && a.length>=3){
+        if ("연동".equalsIgnoreCase(a[0]) && a.length>=3){
             String shopName = a[1];
             String npcArg = a[2];
             if (plugin.getServer().getPluginManager().getPlugin("Citizens")==null){
@@ -52,7 +52,7 @@ public class ShopCommand implements CommandExecutor {
             try {
                 int id = Integer.parseInt(npcArg);
                 plugin.shop().bindNpcToShop(id, shopName);
-                p.sendMessage("§aNPC ID "+id+" ↔ 상점 '"+shopName+"' 연동(비활성화)");
+                p.sendMessage("§aNPC ID "+id+" ↔ 상점 '"+shopName+"' 연동");
             } catch(NumberFormatException ex){
                 // find npc by name
                 net.citizensnpcs.api.npc.NPC target = null;
@@ -61,7 +61,7 @@ public class ShopCommand implements CommandExecutor {
                 }
                 if (target==null){ p.sendMessage("§cNPC를 찾지 못했습니다."); return true; }
                 plugin.shop().bindNpcToShop(target.getId(), shopName);
-                p.sendMessage("§aNPC '"+target.getName()+"' ↔ 상점 '"+shopName+"' 연동(비활성화)");
+                p.sendMessage("§aNPC '"+target.getName()+"' ↔ 상점 '"+shopName+"' 연동");
             }
             return true;
         }
@@ -70,5 +70,5 @@ public class ShopCommand implements CommandExecutor {
     }
 }
 
-// 연동(비활성화): /상점 연동(비활성화) <상점이름> <엔피시>
+// 연동: /상점 연동 <상점이름> <엔피시>
 // Citizens가 설치되어 있으면 NPC 이름 또는 ID로 바인딩하여 클릭시 열리게 함
