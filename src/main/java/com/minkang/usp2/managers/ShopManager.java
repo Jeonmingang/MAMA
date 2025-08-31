@@ -231,4 +231,4 @@ public void createOrUpdate(String name, boolean allowBuy, boolean allowSell, Dou
             m.invoke(this);
         } catch (Exception ignored){}
     }
-}
+
