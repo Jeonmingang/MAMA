@@ -15,7 +15,7 @@ public class ChequeCommand implements CommandExecutor {
         if (amount<=0 || qty<=0){ s.sendMessage("§c0보다 큰 값을 입력하세요."); return true; }
         Player p = (Player)s;
         double total = amount * (double)qty;
-        if (!plugin.economy().withdraw(p, total)){
+        if (!plugin.eco().withdraw(p, total)){
             s.sendMessage("§c잔액이 부족합니다. 필요: §f$"+((long)total)); return true;
         }
         p.getInventory().addItem(plugin.bank().create(amount, qty));
