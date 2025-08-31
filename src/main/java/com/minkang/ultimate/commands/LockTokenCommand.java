@@ -20,3 +20,6 @@ public class LockTokenCommand implements CommandExecutor {
         return true;
     }
 }
+
+// 타입 구분: /잠금권 발급 <수량> <영구|시간>
+// PDC: lock_token_type = "perm" | "time"

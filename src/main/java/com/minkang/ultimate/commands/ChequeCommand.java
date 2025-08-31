@@ -22,3 +22,5 @@ public class ChequeCommand implements CommandExecutor {
         return true;
     }
 }
+
+// 발급 전 잔액 확인/차감은 EconomyManager에서 처리됨(무권한)

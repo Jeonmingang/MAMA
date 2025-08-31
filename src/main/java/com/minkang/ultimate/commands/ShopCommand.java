@@ -46,3 +46,6 @@ public class ShopCommand implements CommandExecutor {
         plugin.shop().open(p, a[0]); return true;
     }
 }
+
+// 연동: /상점 연동 <상점이름> <엔피시>
+// Citizens가 설치되어 있으면 NPC 이름 또는 ID로 바인딩하여 클릭시 열리게 함

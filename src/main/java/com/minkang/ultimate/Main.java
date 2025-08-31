@@ -58,7 +58,8 @@ public class Main extends JavaPlugin {
         PixelmonAliasCommand stats = new PixelmonAliasCommand();
         getCommand("개체값").setExecutor(stats);
         getCommand("노력치").setExecutor(stats);
-getLogger().info("UltimateServerPlugin enabled.");
+getCommand("야투").setExecutor(new NightVisionCommand());
+        getLogger().info("UltimateServerPlugin enabled.");
     }
 
     @Override

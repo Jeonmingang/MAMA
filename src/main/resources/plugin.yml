@@ -1,47 +1,37 @@
 name: UltimateServerPlugin2
 main: com.minkang.ultimate.Main
-version: 1.1.2
+version: 1.4.0
 api-version: 1.16
 author: MinGang
-softdepend: [Vault, Essentials]
+softdepend: [Vault, Essentials, Citizens]
 commands:
   배틀종료:
-    description: Pixelmon /endbattle 실행
+    description: Pixelmon endbattle
     permission: usp.battle
+
   돈:
-    description: 잔액/송금/순위 한글 래퍼
-    usage: "/돈, /돈 보내기 <닉> <금액>, /돈 순위"
+    description: 잔액/송금/순위
     permission: usp.money
+
   수표:
-    description: 커스텀 수표 발급
-    usage: "/수표 <금액> <수량>"
-    permission: usp.banknote.give
+    description: 수표 발급(소지금 차감, 무권한)
+
   수리권:
     description: 수리권 발급
-    usage: "/수리권 발급 <수량>"
     permission: usp.repair.give
-  거래:
-    description: 거래 시스템
-    usage: "/거래 <플레이어> | /거래 수락 <플레이어> | /거래 거절 <플레이어>"
-    permission: usp.trade
+
   상점:
-    description: 상점 생성/추가/삭제/열기/목록
-    usage: "/상점 생성 <이름> | /상점 추가 <이름> <슬롯> <가격> | /상점 삭제 <이름> <슬롯> | /상점 열기 <이름> | /상점 목록"
-    permission: usp.shop
-  상점리로드:
-    description: 상점/설정 리로드
-    permission: usp.shop.admin
+    description: 상점 열기/관리/연동
+
+  거래:
+    description: 거래 요청/수락/거절
+
   잠금:
-    description: 잠금 관리 (시간/영구/추가/목록/해제)
-    usage: "/잠금 <시간|영구|추가|목록|해제> [...]"
-    permission: usp.lock
+    description: 잠금 시간|영구|추가|목록|해제
+
   잠금권:
-    description: 잠금권 발급
-    usage: "/잠금권 발급 <수량>"
+    description: 잠금권 발급(영구/시간)
     permission: usp.lock.give
 
-  개체값:
-    description: Pixelmon /ivs 한글 래퍼
-
-  노력치:
-    description: Pixelmon /evs 한글 래퍼
+  야투:
+    description: 야간투시 토글(무권한)

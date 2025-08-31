@@ -28,40 +28,227 @@ public class ShopManager implements Listener {
     public ShopManager(Main p){
         this.plugin=p;
         reload();
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
     }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
     public void reload(){
         file = new File(plugin.getDataFolder(), "shops.yml");
         if (!file.exists()) plugin.saveResource("shops.yml", false);
         conf = YamlConfiguration.loadConfiguration(file);
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
     }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
     private void save(){
-        try { conf.save(file);}catch(IOException e){ e.printStackTrace(); }
+        try { conf.save(file);
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
     }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}catch(IOException e){ e.printStackTrace(); 
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
 
     public void createShop(String name){
         if (!conf.contains("shops."+name)){
             conf.createSection("shops."+name+".items");
             save();
+        
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
         }
     }
 
+}
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
+
     public void addItem(Player p, String shop, int slot, double price){
         ItemStack hand = p.getInventory().getItemInMainHand();
-        if (hand==null || hand.getType()==Material.AIR){ p.sendMessage("§c손에 아이템을 들어주세요."); return; }
+        if (hand==null || hand.getType()==Material.AIR){ p.sendMessage("§c손에 아이템을 들어주세요."); return; 
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
         int amount = hand.getAmount();
         conf.set("shops."+shop+".items."+slot+".item", hand.getType().name());
         conf.set("shops."+shop+".items."+slot+".price", price);
         conf.set("shops."+shop+".items."+slot+".amount", amount);
         save();
         p.sendMessage("§a상점 등록: §f"+shop+" §7슬롯 "+slot+" §7아이템 "+hand.getType().name()+" §7가격 "+price+" §7수량 "+amount);
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
     }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
 
     public void removeItem(String shop, int slot){
         conf.set("shops."+shop+".items."+slot, null); save();
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
     }
 
+}
+
     public void open(Player p, String shop){
-        if (!conf.contains("shops."+shop)){ p.sendMessage("§c해당 상점이 없습니다."); return; }
+        if (!conf.contains("shops."+shop)){ p.sendMessage("§c해당 상점이 없습니다."); return; 
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
         Inventory inv = Bukkit.createInventory(null, 54, ChatColor.DARK_GREEN+shop);
         if (conf.getConfigurationSection("shops."+shop+".items")!=null){
             for (String key : conf.getConfigurationSection("shops."+shop+".items").getKeys(false)){
@@ -78,17 +265,102 @@ public class ShopManager implements Listener {
                 lore.add("§7좌클릭=구매 / 쉬프트+좌클릭=64개");
                 m.setLore(lore); it.setItemMeta(m);
                 inv.setItem(slot, it);
+            
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
             }
         }
-        p.openInventory(inv);
-        current.put(p.getUniqueId(), shop);
     }
 
+}
+        
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
+        p.openInventory(inv);
+        current.put(p.getUniqueId(), shop);
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
+
     public void list(Player p){
-        if (!conf.contains("shops")){ p.sendMessage("§7상점 없음"); return; }
+        if (!conf.contains("shops")){ p.sendMessage("§7상점 없음"); return; 
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
         Set<String> names = conf.getConfigurationSection("shops").getKeys(false);
         p.sendMessage("§6[상점 목록] §f"+String.join(", ", names));
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
     }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
 
     @EventHandler
     public void onClick(InventoryClickEvent e){
@@ -104,11 +376,79 @@ public class ShopManager implements Listener {
         boolean shift = e.isShiftClick();
         int amount = shift?64:1;
         double priceEach = conf.getDouble("shops."+shop+".items."+e.getSlot()+".price", 0);
-        if (priceEach<=0){ p.sendMessage("§c구매 불가"); return; }
+        if (priceEach<=0){ p.sendMessage("§c구매 불가"); return; 
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
         double total = priceEach * amount;
-        if (!plugin.eco().withdraw(p, total)){ p.sendMessage("§c잔액 부족"); return; }
+        if (!plugin.eco().withdraw(p, total)){ p.sendMessage("§c잔액 부족"); return; 
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
         java.util.HashMap<Integer, ItemStack> left = p.getInventory().addItem(new ItemStack(mat, amount));
         for(ItemStack rem : left.values()) p.getWorld().dropItemNaturally(p.getLocation(), rem);
         p.sendMessage("§a구매: §f"+mat.name()+" x"+amount+" §7(§a$"+total+"§7)");
+    
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
     }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
+}
+
+    public void bindNpcToShop(int npcId, String shopName){
+        npcBindings.put(npcId, shopName);
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        conf.set("citizens_bindings."+npcId, shopName);
+        plugin.saveConfig();
+    }
+    public String getBoundShop(int npcId){ return npcBindings.get(npcId); }
+    private void loadBindings(){
+        org.bukkit.configuration.file.FileConfiguration conf = plugin.getConfig();
+        if(conf.isConfigurationSection("citizens_bindings")){
+            for(String k: conf.getConfigurationSection("citizens_bindings").getKeys(false)){
+                try{ npcBindings.put(Integer.parseInt(k), conf.getString("citizens_bindings."+k)); }catch(Exception ignored){}
+            }
+        }
+    }
+
 }

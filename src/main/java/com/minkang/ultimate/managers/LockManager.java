@@ -28,6 +28,15 @@ import java.io.IOException;
 import java.util.*;
 
 public class LockManager implements Listener {
+    private java.util.UUID safeUUID(Object o){
+        try {
+            if (o==null) return null;
+            String s = String.valueOf(o).trim();
+            if (s.isEmpty() || "null".equalsIgnoreCase(s)) return null;
+            return java.util.safeUUID(s);
+        } catch (Exception ex){ return null; }
+    }
+
     private final Main plugin;
     private final NamespacedKey key;
     private final File file;
