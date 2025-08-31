@@ -1,33 +1,44 @@
-
 package com.minkang.ultimate.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class EggStepsCommand implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player)) { sender.sendMessage("플레이어만"); return true; }
-        Player p = (Player)sender;
-        if (args.length<1){ p.sendMessage(ChatColor.YELLOW+"사용법: /알걸음 <1~6>"); return true; }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "플레이어만 사용할 수 있습니다.");
+            return true;
+        }
+        Player p = (Player) sender;
+
+        if (args.length < 1) {
+            p.sendMessage(ChatColor.YELLOW + "사용법: /알걸음 <1~6>");
+            return true;
+        }
+
         try {
             int slot = Integer.parseInt(args[0]);
-            if (slot<1 || slot>6){ p.sendMessage("§c1~6 사이"); return true; }
-            org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "eggsteps " + p.getName() + " " + slot) ||
-            org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:eggsteps " + p.getName() + " " + slot) ||
+            if (slot < 1 || slot > 6) {
+                p.sendMessage(ChatColor.RED + "슬롯은 1~6 입니다.");
+                return true;
+            }
             tryEggsteps(p, slot);
-        } catch (NumberFormatException ex){
-            p.sendMessage("§c숫자 입력");
+        } catch (NumberFormatException e) {
+            p.sendMessage(ChatColor.RED + "숫자를 입력하세요! (1~6)");
         }
         return true;
     }
 
-    private void tryEggsteps(org.bukkit.entity.Player p, int slot){
+    private void tryEggsteps(Player p, int slot){
         String pName = p.getName();
-        boolean ok = org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "eggsteps " + pName + " " + slot);
-        if (!ok) ok = org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:eggsteps " + pName + " " + slot);
+        boolean ok = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eggsteps " + pName + " " + slot);
+        if (!ok) ok = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pixelmon:eggsteps " + pName + " " + slot);
         if (!ok) p.performCommand("eggsteps " + slot);
     }
-
 }
