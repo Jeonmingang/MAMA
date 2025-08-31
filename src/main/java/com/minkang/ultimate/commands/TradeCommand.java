@@ -1,48 +1,39 @@
 package com.minkang.ultimate.commands;
 
 import com.minkang.ultimate.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import java.lang.reflect.Method;
 
 public class TradeCommand implements CommandExecutor {
     private final Main plugin;
-    public TradeCommand(Main p){ this.plugin=p; }
+    public TradeCommand(Main p){ this.plugin = p; }
 
     @Override
     public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
-        if (!(s instanceof Player)) { s.sendMessage("플레이어만"); return true; }
+        if (!(s instanceof Player)){ s.sendMessage("플레이어만"); return true; }
         Player p = (Player)s;
-        Object mgr = plugin.trade();
 
-        if (a.length==0) {
-            p.sendMessage("§e/거래수락 | /거래취소");
+        if (a.length == 0){
+            p.sendMessage("§7/거래 <플레이어>  §8— 거래 요청");
+            p.sendMessage("§7/거래 수락      §8— 들어온 요청 수락");
+            p.sendMessage("§7/거래 취소      §8— 진행 중/대기 중 거래 취소");
             return true;
         }
-        String sub = a[0];
-        if ("수락".equalsIgnoreCase(sub) || "accept".equalsIgnoreCase(sub)) {
-            if (tryInvoke(mgr, "accept", Player.class, p)) return true;
-            p.performCommand("trade accept");
+
+        if ("수락".equalsIgnoreCase(a[0])){
+            if (plugin.trade().accept(p)){ p.sendMessage("§a거래 수락"); }
+            else p.sendMessage("§c유효한 요청이 없습니다.");
             return true;
         }
-        if ("취소".equalsIgnoreCase(sub) || "cancel".equalsIgnoreCase(sub)) {
-            if (tryInvoke(mgr, "cancel", Player.class, p)) return true;
-            p.performCommand("trade cancel");
+        if ("취소".equalsIgnoreCase(a[0])){
+            plugin.trade().cancel(p);
             return true;
         }
-        p.sendMessage("§e/거래수락 | /거래취소");
+
+        Player to = Bukkit.getPlayerExact(a[0]);
+        if (to == null || to == p){ p.sendMessage("§c대상 오류"); return true; }
+        plugin.trade().request(p, to);
         return true;
-    }
-
-    private boolean tryInvoke(Object target, String name, Class<?> argType, Player p){
-        if (target==null) return false;
-        try {
-            Method m = target.getClass().getDeclaredMethod(name, argType);
-            m.setAccessible(true);
-            m.invoke(target, p);
-            return true;
-        } catch (Throwable t) {
-            return false;
-        }
     }
 }
