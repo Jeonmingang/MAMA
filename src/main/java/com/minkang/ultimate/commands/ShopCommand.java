@@ -43,6 +43,29 @@ public class ShopCommand implements CommandExecutor {
         if ("열기".equalsIgnoreCase(a[0]) && a.length>=2){ plugin.shop().open(p, a[1]); return true; }
         if ("목록".equalsIgnoreCase(a[0])){ plugin.shop().list(p); return true; }
 
+        if ("연동".equalsIgnoreCase(a[0]) && a.length>=3){
+            String shopName = a[1];
+            String npcArg = a[2];
+            if (plugin.getServer().getPluginManager().getPlugin("Citizens")==null){
+                p.sendMessage("§cCitizens가 설치되어 있지 않습니다."); return true;
+            }
+            try {
+                int id = Integer.parseInt(npcArg);
+                plugin.shop().bindNpcToShop(id, shopName);
+                p.sendMessage("§aNPC ID "+id+" ↔ 상점 '"+shopName+"' 연동");
+            } catch(NumberFormatException ex){
+                // find npc by name
+                net.citizensnpcs.api.npc.NPC target = null;
+                for (net.citizensnpcs.api.npc.NPC npc: net.citizensnpcs.api.CitizensAPI.getNPCRegistry()){
+                    if (npc.getName()!=null && npc.getName().equalsIgnoreCase(npcArg)){ target = npc; break; }
+                }
+                if (target==null){ p.sendMessage("§cNPC를 찾지 못했습니다."); return true; }
+                plugin.shop().bindNpcToShop(target.getId(), shopName);
+                p.sendMessage("§aNPC '"+target.getName()+"' ↔ 상점 '"+shopName+"' 연동");
+            }
+            return true;
+        }
+
         plugin.shop().open(p, a[0]); return true;
     }
 }

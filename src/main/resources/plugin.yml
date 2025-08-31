@@ -1,6 +1,6 @@
 name: UltimateServerPlugin2
 main: com.minkang.ultimate.Main
-version: 1.4.0
+version: 1.4.2
 api-version: 1.16
 author: MinGang
 softdepend: [Vault, Essentials, Citizens]
@@ -35,3 +35,6 @@ commands:
 
   야투:
     description: 야간투시 토글(무권한)
+
+  상점리로드:
+    description: 상점/설정 리로드
