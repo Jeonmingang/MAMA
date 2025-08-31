@@ -53,7 +53,6 @@ public class TradeManager implements Listener {
     public void cancel(String reason){
             if (finished) { return; }
             finished = true;
-            // Return items safely with overflow drop
             java.util.function.BiConsumer<Player, Integer> back = (pl, slotIdx) -> {
                 org.bukkit.inventory.ItemStack it = inv.getItem(slotIdx);
                 if (it != null){
@@ -86,17 +85,21 @@ public class TradeManager implements Listener {
     }
 
     @EventHandler
-    public void onClick(InventoryClickEvent e){
-            try {
+public void onClick(InventoryClickEvent e){
+    try {
         if (!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
         TradeSession s = sessions.get(p.getUniqueId());
         if (s==null || e.getView().getTopInventory()!=s.inv) return;
         e.setCancelled(true);
         s.handleClick(p, e);
+    } catch (Throwable ex) {
+        e.setCancelled(true);
+        try { ((Player)e.getWhoClicked()).sendMessage("§c거래 오류: 이벤트가 취소되었습니다."); } catch (Throwable ignore) {}
     }
+}
 
-    @EventHandler
+@EventHandler
     public void onClose(InventoryCloseEvent e){
         if (!(e.getPlayer() instanceof Player)) return;
         Player p = (Player)e.getPlayer();
@@ -111,6 +114,7 @@ public class TradeManager implements Listener {
         boolean aReady=false, bReady=false;
         final int[] aSlots, bSlots;
         final int aAccept=45, bAccept=53;
+        boolean finished=false;
         boolean finished=false;
 
         TradeSession(Player a, Player b){
@@ -238,6 +242,8 @@ public class TradeManager implements Listener {
         }
 
         void finalizeTrade(){
+            if (finished) return;
+            finished = true;
             if (finished) return;
             finished = true;
             List<ItemStack> aItems = new ArrayList<>();
