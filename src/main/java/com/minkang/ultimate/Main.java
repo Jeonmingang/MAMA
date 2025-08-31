@@ -6,13 +6,21 @@ import com.minkang.ultimate.listeners.*;
 import com.minkang.ultimate.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.CommandExecutor;
 
 public class Main extends JavaPlugin {
     private void logSevere(String msg, Throwable t){
         getLogger().severe(msg + (t!=null? (" :: " + t.getMessage()) : ""));
     }
 
-    private EconomyManager economy;
+    
+    private void bindCmd(String name, CommandExecutor exec){
+        PluginCommand cmd = getCommand(name);
+        if (cmd != null){ cmd.setExecutor(exec); }
+        else { getLogger().warning("command not found: " + name); }
+    }
+private EconomyManager economy;
     private BanknoteManager banknote;
     private RepairManager repair;
     private TradeManager trade;
@@ -47,20 +55,20 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(shop, this);
         Bukkit.getPluginManager().registerEvents(lock, this);
 
+        
         // commands
-        getCommand("배틀종료").setExecutor(new BattleEndCommand());
-        try { getCommand("돈").setExecutor(new MoneyCommand(this));
-        try { getCommand("수표").setExecutor(new ChequeCommand(this));
-        try { getCommand("수리권").setExecutor(new RepairTicketCommand(this));
-        try { getCommand("거래").setExecutor(new TradeCommand(this));
+        bindCmd("배틀종료", new BattleEndCommand());
+        bindCmd("돈", new MoneyCommand(this));
+        bindCmd("수표", new ChequeCommand(this));
+        bindCmd("수리권", new RepairTicketCommand(this));
+        bindCmd("거래", new TradeCommand(this));
         ShopCommand shopCmd = new ShopCommand(this);
-        try { getCommand("상점").setExecutor(shopCmd);
-        try { getCommand("상점리로드").setExecutor(shopCmd);
-        try { getCommand("잠금").setExecutor(new LockCommand(this));
-        getCommand("잠금권").setExecutor(new LockTokenCommand(this));
-        PixelmonAliasCommand stats = new PixelmonAliasCommand();
-try { getCommand("야투").setExecutor(new NightVisionCommand());
-        getLogger().info("UltimateServerPlugin enabled.");
+        bindCmd("상점", shopCmd);
+        bindCmd("상점리로드", shopCmd);
+        bindCmd("잠금", new LockCommand(this));
+        bindCmd("잠금권", new LockTokenCommand(this));
+        bindCmd("야투", new NightVisionCommand());
+getLogger().info("UltimateServerPlugin enabled.");
     }
 
     @Override
