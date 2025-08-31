@@ -339,4 +339,5 @@ public class TradeManager implements Listener {
             if (!s.finished) s.cancel("서버 종료");
         }
     }
+    public void forceClose(){ closeAll(); }
 }
