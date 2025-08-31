@@ -73,7 +73,21 @@ getLogger().info("UltimateServerPlugin enabled.");
 
     @Override
     public void onDisable() {
-        trade.closeAll();
+        safeCloseAll(trade);
         getLogger().info("UltimateServerPlugin disabled.");
     }
+
+    private void safeCloseAll(Object manager) {
+        if (manager == null) return;
+        String[] names = new String[]{"closeAll","shutdown","stopAll","cancelAll","clearAll","close"};
+        for (String n : names) {
+            try {
+                java.lang.reflect.Method m = manager.getClass().getDeclaredMethod(n);
+                m.setAccessible(true);
+                m.invoke(manager);
+                return;
+            } catch (Throwable ignored) {}
+        }
+    }
+
 }
