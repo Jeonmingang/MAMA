@@ -6,6 +6,13 @@ import com.minkang.ultimate.listeners.*;
 import com.minkang.ultimate.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import com.minkang.ultimate.listeners.TradeAliasListener;
+import com.minkang.ultimate.commands.LockCommand;
+import com.minkang.ultimate.managers.LockManager;
+import com.minkang.ultimate.shop.ShopLinkWrapperCommand;
+import com.minkang.ultimate.listeners.YatuListener;
+import com.minkang.ultimate.commands.YatuCommand;
+import org.bukkit.NamespacedKey;
 
 public class Main extends JavaPlugin {
 
@@ -59,6 +66,16 @@ public class Main extends JavaPlugin {
         getCommand("개체값").setExecutor(stats);
         getCommand("노력치").setExecutor(stats);
         getCommand("알걸음").setExecutor(new EggStepsCommand());
+        // 야투 (야간투시) 커맨드 + 리스너
+        NamespacedKey YATU_KEY = new NamespacedKey(this, "yatu_enabled");
+        getCommand("야투").setExecutor(new YatuCommand(this, YATU_KEY));
+        getServer().getPluginManager().registerEvents(new YatuListener(this, YATU_KEY), this);
+
+        // Citizens 상점 연동 래퍼
+        if (getServer().getPluginManager().getPlugin("Citizens") != null) {
+            getCommand("상점").setExecutor(new ShopLinkWrapperCommand(this));
+        }
+
 
         getLogger().info("UltimateServerPlugin enabled.");
     }

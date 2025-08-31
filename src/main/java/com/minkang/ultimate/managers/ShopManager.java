@@ -99,16 +99,81 @@ public class ShopManager implements Listener {
         String title = e.getView().getTitle();
         if (!title.equals(org.bukkit.ChatColor.DARK_GREEN+shop)) return;
         e.setCancelled(true);
-        ItemStack it = e.getCurrentItem(); if (it==null || !it.hasItemMeta()) return;
-        Material mat = it.getType();
-        boolean shift = e.isShiftClick();
-        int amount = shift?64:1;
-        double priceEach = conf.getDouble("shops."+shop+".items."+e.getSlot()+".price", 0);
-        if (priceEach<=0){ p.sendMessage("§c구매 불가"); return; }
-        double total = priceEach * amount;
-        if (!plugin.eco().withdraw(p, total)){ p.sendMessage("§c잔액 부족"); return; }
-        java.util.HashMap<Integer, ItemStack> left = p.getInventory().addItem(new ItemStack(mat, amount));
-        for(ItemStack rem : left.values()) p.getWorld().dropItemNaturally(p.getLocation(), rem);
-        p.sendMessage("§a구매: §f"+mat.name()+" x"+amount+" §7(§a$"+total+"§7)");
+
+        ItemStack icon = e.getCurrentItem();
+        if (icon==null || icon.getType()==Material.AIR) return;
+
+        org.bukkit.event.inventory.ClickType click = e.getClick();
+        boolean isLeft = click.isLeftClick();
+        boolean isRight = click.isRightClick();
+        boolean shift = click.isShiftClick();
+
+        // 유닛 = 아이콘 표기 수량
+        int unitAmount = Math.max(1, icon.getAmount());
+        int units = shift ? 64 : 1;
+        int qty = unitAmount * units; // 실제 아이템 총량
+
+        int slot = e.getSlot();
+        String basePath = "shops."+shop+".items."+slot;
+        String matn = conf.getString(basePath+".item");
+        Material mat = matn==null?icon.getType():Material.matchMaterial(matn);
+        if (mat==null) return;
+
+        double buyPricePerUnit = conf.getDouble(basePath+".price", 0D);  // 단위(유닛) 가격
+        double sellPricePerUnit = conf.getDouble(basePath+".sell", buyPricePerUnit); // 없으면 구매가와 동일
+
+        if (isLeft) {
+            // 구매
+            if (buyPricePerUnit <= 0){ p.sendMessage("§c구매 불가"); return; }
+            double total = buyPricePerUnit * units; // 유닛 가격 × 유닛 개수
+            if (!plugin.eco().withdraw(p, total)){ p.sendMessage("§c잔액 부족"); return; }
+
+            // 지급 (qty 만큼, 스택 분할 자동)
+            java.util.HashMap<Integer, ItemStack> left = p.getInventory().addItem(new ItemStack(mat, qty));
+            for(ItemStack rem : left.values()) p.getWorld().dropItemNaturally(p.getLocation(), rem);
+
+            p.sendMessage("§a구매: §f"+mat.name()+" §fx"+qty+" §7(§a$"+total+"§7)");
+            return;
+        }
+
+        if (isRight) {
+            // 판매
+            if (sellPricePerUnit <= 0){ p.sendMessage("§c판매 불가"); return; }
+            int owned = 0;
+            for (ItemStack it : p.getInventory().getContents()) {
+                if (it!=null && it.getType()==mat) owned += it.getAmount();
+            }
+            // 오프핸드 포함
+            ItemStack off = p.getInventory().getItemInOffHand();
+            if (off!=null && off.getType()==mat) owned += off.getAmount();
+
+            if (owned < qty) { p.sendMessage("§c판매할 아이템이 부족합니다. 보유: "+owned+"개 / 필요: "+qty+"개"); return; }
+
+            // 정확히 qty 제거
+            int toRemove = qty;
+            org.bukkit.inventory.PlayerInventory inv = p.getInventory();
+            for (int i=0;i<inv.getSize() && toRemove>0;i++){
+                ItemStack it = inv.getItem(i);
+                if (it==null || it.getType()!=mat) continue;
+                int take = Math.min(it.getAmount(), toRemove);
+                it.setAmount(it.getAmount()-take);
+                if (it.getAmount()<=0) inv.setItem(i, null);
+                toRemove -= take;
+            }
+            if (toRemove>0){
+                ItemStack offH = inv.getItemInOffHand();
+                if (offH!=null && offH.getType()==mat){
+                    int take = Math.min(offH.getAmount(), toRemove);
+                    offH.setAmount(offH.getAmount()-take);
+                    if (offH.getAmount()<=0) inv.setItemInOffHand(null);
+                    toRemove -= take;
+                }
+            }
+
+            double total = sellPricePerUnit * units; // 유닛 가격 × 유닛 개수
+            plugin.eco().deposit(p, total);
+            p.sendMessage("§a판매: §f"+mat.name()+" §fx"+qty+" §7(§a+$"+total+"§7)");
+            return;
+        }
     }
 }

@@ -23,8 +23,12 @@ public class StatsCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.RED + "포켓몬 슬롯은 1~6 사이여야 합니다.");
                 return true;
             }
-            if (label.equalsIgnoreCase("개체값")) player.performCommand("ivs " + slot);
-            else if (label.equalsIgnoreCase("노력치")) player.performCommand("evs " + slot);
+            if (label.equalsIgnoreCase("개체값")) org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "ivs " + player.getName() + " " + slot) ||
+                org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:ivs " + player.getName() + " " + slot) ||
+                player.performCommand("ivs " + slot);
+            else if (label.equalsIgnoreCase("노력치")) org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "evs " + player.getName() + " " + slot) ||
+                org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:evs " + player.getName() + " " + slot) ||
+                player.performCommand("evs " + slot);
         } catch (NumberFormatException e) {
             player.sendMessage(ChatColor.RED + "숫자를 입력하세요! (1~6)");
         }

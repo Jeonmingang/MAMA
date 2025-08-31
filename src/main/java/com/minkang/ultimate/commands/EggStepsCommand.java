@@ -14,6 +14,8 @@ public class EggStepsCommand implements CommandExecutor {
         try {
             int slot = Integer.parseInt(args[0]);
             if (slot<1 || slot>6){ p.sendMessage("§c1~6 사이"); return true; }
+            org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "eggsteps " + p.getName() + " " + slot) ||
+            org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:eggsteps " + p.getName() + " " + slot) ||
             p.performCommand("eggsteps " + slot);
         } catch (NumberFormatException ex){
             p.sendMessage("§c숫자 입력");

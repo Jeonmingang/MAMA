@@ -3,7 +3,7 @@ main: com.minkang.ultimate.Main
 version: 1.0.0
 api-version: 1.16
 author: MinGang
-softdepend: [Vault, Essentials]
+softdepend: [Vault, Essentials, Citizens]
 commands:
   배틀종료:
     description: Pixelmon /endbattle 실행
@@ -42,15 +42,23 @@ commands:
   알걸음:
     description: Pixelmon 알 걸음수(/eggsteps) 한글 래퍼
     usage: "/알걸음 <1~6>"
-    permission: usp.pixelmon
+    
   개체값:
     description: Pixelmon 개체값(/ivs) 한글 래퍼
     usage: "/개체값 <1~6>"
-    permission: usp.pixelmon
+    
   노력치:
     description: Pixelmon 노력치(/evs) 한글 래퍼
     usage: "/노력치 <1~6>"
-    permission: usp.pixelmon
+
+  야투:
+    description: 야간투시 토글 (권한 불필요)
+    usage: "/야투 [on|off]"
+    aliases: [yatu, nv, nightvision]
+  상점연동:
+    description: Citizens NPC ↔ 상점 연동 래퍼
+    usage: "/상점 연동 <상점키> | /상점 연동목록 | /상점 연동해제 <ID>"
+
 permissions:
   usp.*:
     default: op
