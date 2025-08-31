@@ -1,6 +1,6 @@
 name: UltimateServerPlugin2
 main: com.minkang.usp2.Main
-version: 1.4.16
+version: 1.4.17
 api-version: 1.16
 author: MinGang
 softdepend: [Vault, Essentials, Citizens]
