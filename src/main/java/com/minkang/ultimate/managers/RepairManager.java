@@ -1,140 +1,96 @@
-
 package com.minkang.ultimate.managers;
 
 import com.minkang.ultimate.Main;
-import com.minkang.ultimate.utils.Texts;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Repairs a damaged item using a "repair ticket".
- * The ticket is a PAPER with a persistent-data boolean tag.
- * Usage:
- *  - Hold the ticket in main hand and the item to repair in offhand, then right-click.
- *  - OR hold the ticket in offhand, item in main hand, then right-click.
- * The ticket is consumed by 1 and the target item durability is reset to 0.
- */
 public class RepairManager implements Listener {
-
     private final Main plugin;
-    private final NamespacedKey keyTicket;
-    private Material ticketMaterial;
-    private String ticketName;
-    private List<String> ticketLore;
+    private final NamespacedKey key;
 
     public RepairManager(Main plugin) {
         this.plugin = plugin;
-        this.keyTicket = new NamespacedKey(plugin, "repair_ticket");
-        loadConfigValues();
+        this.key = new NamespacedKey(plugin, "repair_ticket");
     }
 
-    private void loadConfigValues() {
-        FileConfiguration c = plugin.getConfig();
-        // Sensible defaults if not present
-        this.ticketMaterial = Material.matchMaterial(c.getString("repair-ticket.material", "PAPER"));
-        if (this.ticketMaterial == null) this.ticketMaterial = Material.PAPER;
-
-        this.ticketName = Texts.color(c.getString("repair-ticket.name", "&b수리권"));
-        this.ticketLore = new ArrayList<>();
-        List<String> fromCfg = c.getStringList("repair-ticket.lore");
-        if (fromCfg == null || fromCfg.isEmpty()) {
-            this.ticketLore.add(Texts.color("&7우클릭으로 사용, 반대손 아이템 수리"));
-        } else {
-            for (String s : fromCfg) this.ticketLore.add(Texts.color(s));
-        }
-    }
-
+    /** Create a repair ticket stack with the identifying PDC key set. */
     public ItemStack create(int amount) {
-        ItemStack is = new ItemStack(ticketMaterial, Math.max(1, amount));
-        ItemMeta meta = is.getItemMeta();
+        if (amount < 1) amount = 1;
+        ItemStack ticket = new ItemStack(Material.PAPER, amount);
+        ItemMeta meta = ticket.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ticketName);
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-            meta.setLore(ticketLore);
+            meta.setDisplayName("§b수리권");
             PersistentDataContainer pdc = meta.getPersistentDataContainer();
-            pdc.set(keyTicket, PersistentDataType.BYTE, (byte) 1);
-            is.setItemMeta(meta);
+            pdc.set(key, PersistentDataType.INTEGER, 1);
+            ticket.setItemMeta(meta);
         }
-        return is;
+        return ticket;
     }
 
-    /** Register in Main.onEnable(): getServer().getPluginManager().registerEvents(repair(), this); */
+    /** Returns true if the given item stack is a repair ticket issued by this plugin. */
+    private boolean isRepairTicket(ItemStack stack) {
+        if (stack == null || stack.getType() == Material.AIR || !stack.hasItemMeta()) return false;
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) return false;
+        Integer flag = meta.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
+        return flag != null && flag == 1;
+    }
+
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
-        // Only handle main hand interactions to avoid double firing
-        if (e.getHand() != EquipmentSlot.HAND) return;
+        if (e.getHand() != EquipmentSlot.HAND) return; // only main hand trigger
+        Player p = e.getPlayer();
+        ItemStack main = p.getInventory().getItemInMainHand();
+        ItemStack off = p.getInventory().getItemInOffHand();
 
-        ItemStack used = e.getItem();
-        if (used == null || !used.hasItemMeta()) return;
+        boolean mainIsTicket = isRepairTicket(main);
+        boolean offIsTicket  = isRepairTicket(off);
 
-        // Check both main/offhand for the ticket tag – users might hold it in either hand.
-        boolean mainIsTicket = hasTicketTag(used);
-        boolean offIsTicket = false;
-        ItemStack off = e.getPlayer().getInventory().getItemInOffHand();
-        if (off != null && off.hasItemMeta()) offIsTicket = hasTicketTag(off);
-
+        // If neither is a ticket, ignore
         if (!mainIsTicket && !offIsTicket) return;
 
-        Player p = e.getPlayer();
-        e.setCancelled(true);
-
-        // Determine target item to repair: if ticket in main hand -> repair offhand; else repair main hand.
-        ItemStack target = mainIsTicket ? off : p.getInventory().getItemInMainHand();
-        ItemStack ticket = mainIsTicket ? used : off;
+        // Choose ticket stack and target tool: ticket repairs the OTHER hand item
+        ItemStack ticket = mainIsTicket ? main : off;
+        ItemStack target = mainIsTicket ? off : main;
 
         if (target == null || target.getType() == Material.AIR) {
-            p.sendMessage("§c수리할 아이템을 반대 손에 들어주세요.");
+            p.sendMessage("§c반대 손에 수리할 아이템을 들어주세요.");
             return;
         }
-        if (!target.hasItemMeta() || !(target.getItemMeta() instanceof Damageable)) {
-            p.sendMessage("§c이 아이템은 내구도가 없습니다.");
-            return;
-        }
-
         ItemMeta meta = target.getItemMeta();
+        if (!(meta instanceof Damageable)) {
+            p.sendMessage("§7이 아이템은 내구도가 없습니다.");
+            return;
+        }
         Damageable dmg = (Damageable) meta;
         if (dmg.getDamage() <= 0) {
             p.sendMessage("§7이미 내구도가 가득 찼습니다.");
             return;
         }
 
-        // Repair
         dmg.setDamage(0);
-        target.setItemMeta(meta);
+        target.setItemMeta((ItemMeta) dmg);
 
         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1f, 1.2f);
         p.sendMessage("§b수리권 사용: 아이템이 수리되었습니다.");
 
-        // Consume one ticket
+        // consume one ticket from the correct hand
         if (ticket.getAmount() <= 1) {
             if (mainIsTicket) p.getInventory().setItemInMainHand(null);
             else p.getInventory().setItemInOffHand(null);
         } else {
             ticket.setAmount(ticket.getAmount() - 1);
         }
-    }
-
-    private boolean hasTicketTag(ItemStack is) {
-        ItemMeta meta = is.getItemMeta();
-        if (meta == null) return false;
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        Byte b = pdc.get(keyTicket, PersistentDataType.BYTE);
-        return b != null && b == (byte) 1;
     }
 }
