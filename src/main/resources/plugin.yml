@@ -1,9 +1,9 @@
 name: UltimateServerPlugin2
 main: com.minkang.ultimate.Main
-version: 1.4.3
+version: 1.4.4
 api-version: 1.16
 author: MinGang
-softdepend: [Vault, Essentials, Citizens]
+softdepend: [Vault, Essentials]
 commands:
   배틀종료:
     description: Pixelmon endbattle
@@ -38,9 +38,3 @@ commands:
 
   상점리로드:
     description: 상점/설정 리로드
-
-  개체값:
-    description: auto-added
-
-  노력치:
-    description: auto-added
