@@ -8,6 +8,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
+    private void logSevere(String msg, Throwable t){
+        getLogger().severe(msg + (t!=null? (" :: " + t.getMessage()) : ""));
+    }
 
     private EconomyManager economy;
     private BanknoteManager banknote;
@@ -46,19 +49,19 @@ public class Main extends JavaPlugin {
 
         // commands
         getCommand("배틀종료").setExecutor(new BattleEndCommand());
-        getCommand("돈").setExecutor(new MoneyCommand(this));
-        getCommand("수표").setExecutor(new ChequeCommand(this));
-        getCommand("수리권").setExecutor(new RepairTicketCommand(this));
-        getCommand("거래").setExecutor(new TradeCommand(this));
+        try { getCommand("돈").setExecutor(new MoneyCommand(this));
+        try { getCommand("수표").setExecutor(new ChequeCommand(this));
+        try { getCommand("수리권").setExecutor(new RepairTicketCommand(this));
+        try { getCommand("거래").setExecutor(new TradeCommand(this));
         ShopCommand shopCmd = new ShopCommand(this);
-        getCommand("상점").setExecutor(shopCmd);
-        getCommand("상점리로드").setExecutor(shopCmd);
-        getCommand("잠금").setExecutor(new LockCommand(this));
+        try { getCommand("상점").setExecutor(shopCmd);
+        try { getCommand("상점리로드").setExecutor(shopCmd);
+        try { getCommand("잠금").setExecutor(new LockCommand(this));
         getCommand("잠금권").setExecutor(new LockTokenCommand(this));
         PixelmonAliasCommand stats = new PixelmonAliasCommand();
-        getCommand("개체값").setExecutor(stats);
-        getCommand("노력치").setExecutor(stats);
-getCommand("야투").setExecutor(new NightVisionCommand());
+        try { getCommand("개체값").setExecutor(stats);
+        try { getCommand("노력치").setExecutor(stats);
+try { getCommand("야투").setExecutor(new NightVisionCommand());
         getLogger().info("UltimateServerPlugin enabled.");
     }
 
