@@ -8,6 +8,10 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class PixelmonAliasCommand implements CommandExecutor, TabCompleter {
+    public PixelmonAliasCommand(com.minkang.usp2.Main main) {
+        // Main reference available if needed
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) { sender.sendMessage("플레이어만 사용할 수 있습니다."); return true; }

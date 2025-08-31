@@ -6,6 +6,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class NightVisionCommand implements CommandExecutor {
+    public NightVisionCommand(com.minkang.usp2.Main main) {
+        // Main reference available if needed
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) { sender.sendMessage("플레이어만 사용 가능합니다."); return true; }

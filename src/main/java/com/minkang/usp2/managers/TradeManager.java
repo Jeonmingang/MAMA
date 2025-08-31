@@ -115,6 +115,7 @@ public class TradeManager implements Listener {
         s.open();
     }
 class TradeSession {
+        private boolean aReady=false, bReady=false;
         final Player a, b;
         final Inventory inv;
         boolean aReady=false, bReady=false;
@@ -168,21 +169,23 @@ class TradeSession {
             if (bReady){ bReady=false; inv.setItem(bAccept, button(Material.LIME_TERRACOTTA,"§a상대 수락")); }
         }
 
+        
         void handleClick(Player p, InventoryClickEvent e){
             int raw = e.getRawSlot();
             ClickType type = e.getClick();
             // Accept buttons
             if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
                 aReady = !aReady;
-                inv.setItem(aAccept, button(aReady?Material.RED_TERRACOTTA:Material.LIME_TERRACOTTA, aReady?"§c내 수락 해제":"§a내 수락"));
+                inv.setItem(aAccept, button(aReady ? Material.RED_TERRACOTTA : Material.LIME_TERRACOTTA, aReady ? "§c내 수락 해제" : "§a내 수락"));
+                if (aReady && bReady) { finish(); }
                 return;
             }
             if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
                 bReady = !bReady;
-                inv.setItem(bAccept, button(bReady?Material.RED_TERRACOTTA:Material.LIME_TERRACOTTA, bReady?"§c상대 수락 해제":"§a상대 수락"));
+                inv.setItem(bAccept, button(bReady ? Material.RED_TERRACOTTA : Material.LIME_TERRACOTTA, bReady ? "§c상대 수락 해제" : "§a상대 수락"));
+                if (aReady && bReady) { finish(); }
                 return;
             }
-
             // Move items within own area or from player inventory
             if (raw < 54){
                 // clicks inside top
@@ -253,3 +256,25 @@ class TradeSession {
         }
     }
 }
+
+        void toggleReady(Player p){
+            if (p.getUniqueId().equals(a.getUniqueId())) aReady = !aReady;
+            else if (p.getUniqueId().equals(b.getUniqueId())) bReady = !bReady;
+            updateButtons();
+            checkBothReady();
+        }
+        void updateButtons(){
+            ItemStack btnA = new ItemStack(aReady? Material.LIME_WOOL : Material.RED_WOOL, 1);
+            ItemMeta ma = btnA.getItemMeta(); ma.setDisplayName(aReady? "§a내 수락" : "§c내 수락"); btnA.setItemMeta(ma);
+            inv.setItem(buttonIndexFor(a), btnA);
+
+            ItemStack btnB = new ItemStack(bReady? Material.LIME_WOOL : Material.RED_WOOL, 1);
+            ItemMeta mb = btnB.getItemMeta(); mb.setDisplayName(bReady? "§a상대 수락" : "§c상대 수락"); btnB.setItemMeta(mb);
+            inv.setItem(buttonIndexFor(b), btnB);
+        }
+        void checkBothReady(){
+            if (aReady && bReady){
+                // execute trade
+                complete();
+            }
+        }

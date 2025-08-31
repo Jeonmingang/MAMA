@@ -17,29 +17,33 @@ public class StatsCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
 
-        // 어떤 명령인지 식별: 개체값 → ivs, 노력치 → evs
-        String base = "ivs";
-        String name = cmd.getName();
-        if ("노력치".equalsIgnoreCase(name)) base = "evs";
-        else if ("개체값".equalsIgnoreCase(name)) base = "ivs";
-        // 혹시 label로 들어와도 방어
-        else if ("evs".equalsIgnoreCase(label)) base = "evs";
-        else if ("ivs".equalsIgnoreCase(label)) base = "ivs";
-
-        if (args.length < 1) {
-            player.sendMessage(ChatColor.YELLOW + "사용법: /" + name + " <1~6>");
+        if (args.length == 0) {
+            player.sendMessage(ChatColor.YELLOW + "/스탯 보기|이동 <1~6>");
             return true;
         }
 
-        try {
-            int slot = Integer.parseInt(args[0]);
-            if (slot < 1 || slot > 6) {
-                player.sendMessage(ChatColor.RED + "슬롯은 1~6 입니다.");
+        String sub = args[0];
+        if ("보기".equalsIgnoreCase(sub)) {
+            // 픽셀몬 스탯 보기 위임
+            tryPixelmonCommand(player, "showspecs", 0);
+            return true;
+        }
+        if ("이동".equalsIgnoreCase(sub)) {
+            if (args.length < 2) {
+                player.sendMessage(ChatColor.RED + "숫자를 입력하세요! (1~6)");
                 return true;
             }
-            tryPixelmonCommand(player, base, slot);
-        } catch (NumberFormatException e) {
-            player.sendMessage(ChatColor.RED + "숫자를 입력하세요! (1~6)");
+            try {
+                int slot = Integer.parseInt(args[1]);
+                if (slot < 1 || slot > 6) {
+                    player.sendMessage(ChatColor.RED + "1~6 사이 숫자!");
+                    return true;
+                }
+                tryPixelmonCommand(player, "switch", slot);
+            } catch (NumberFormatException ex) {
+                player.sendMessage(ChatColor.RED + "숫자를 입력하세요! (1~6)");
+            }
+            return true;
         }
         return true;
     }
@@ -47,10 +51,10 @@ public class StatsCommand implements CommandExecutor {
     private void tryPixelmonCommand(Player player, String base, int slot){
         String pName = player.getName();
         // 1) 콘솔로 시도
-        boolean ok = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), base + " " + pName + " " + slot);
+        boolean ok = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), base + " " + pName + (slot>0? " "+slot : ""));
         // 2) 네임스페이스가 붙은 커맨드도 시도
-        if (!ok) ok = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pixelmon:" + base + " " + pName + " " + slot);
+        if (!ok) ok = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pixelmon:" + base + " " + pName + (slot>0? " "+slot : ""));
         // 3) 마지막으로 플레이어 권한에서 직접 시도
-        if (!ok) player.performCommand(base + " " + slot);
+        if (!ok) player.performCommand(base + (slot>0? " "+slot : ""));
     }
 }

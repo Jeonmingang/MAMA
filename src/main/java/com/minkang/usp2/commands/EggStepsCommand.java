@@ -8,6 +8,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class EggStepsCommand implements CommandExecutor {
+    public EggStepsCommand(com.minkang.usp2.Main main) {
+        // Main reference available if needed
+    }
+
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

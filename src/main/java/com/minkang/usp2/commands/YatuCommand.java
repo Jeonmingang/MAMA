@@ -12,6 +12,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class YatuCommand implements CommandExecutor {
+    public YatuCommand(com.minkang.usp2.Main main) {
+        this(main, new org.bukkit.NamespacedKey(main, "yatu"));
+    }
+
     private final JavaPlugin plugin;
     private final NamespacedKey KEY;
     public YatuCommand(JavaPlugin plugin, NamespacedKey key){ this.plugin=plugin; this.KEY=key; }
