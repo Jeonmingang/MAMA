@@ -187,8 +187,7 @@ public class ShopManager implements Listener {
     }
 }
 
-
-    public void createOrUpdate(String name, boolean allowBuy, boolean allowSell, Double price){
+public void createOrUpdate(String name, boolean allowBuy, boolean allowSell, Double price){
         // 기본 상점 설정 저장
         org.bukkit.configuration.file.FileConfiguration conf = getConfig();
         String base = "shops."+name+".";
@@ -215,3 +214,4 @@ public class ShopManager implements Listener {
             m.invoke(this);
         } catch (Exception ignored){}
     }
+}
