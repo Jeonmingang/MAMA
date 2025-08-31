@@ -114,130 +114,76 @@ public class TradeManager implements Listener {
         sessions.put(b.getUniqueId(), s);
         s.open();
     }
-class TradeSession {
-        private boolean aReady=false, bReady=false;
-        final Player a, b;
-        final Inventory inv;
-        boolean aReady=false, bReady=false;
-        final int[] aSlots, bSlots;
-        final int aAccept=45, bAccept=53;
-        boolean finished=false;
+    class TradeSession {
+        private final Player a, b;
+        private final Inventory inv;
+        private final int[] aSlots, bSlots;
+        private boolean aReady=false, bReady=false, finished=false;
 
         TradeSession(Player a, Player b){
             this.a=a; this.b=b;
-            this.inv = Bukkit.createInventory(null, 54, ChatColor.DARK_GRAY+"거래: "+a.getName()+" <> "+b.getName());
-            aSlots = new int[]{10,11,12,19,20,21,28,29,30};
-            bSlots = new int[]{16,15,14,25,24,23,34,33,32};
-            drawFrame();
+            this.inv = Bukkit.createInventory(null, 54, "§0거래");
+            this.aSlots = new int[]{10,11,12,19,20,21,28,29,30};
+            this.bSlots = new int[]{14,15,16,23,24,25,32,33,34};
+            updateButtons();
+            a.openInventory(inv); b.openInventory(inv);
         }
 
-        void drawFrame(){
-            ItemStack g = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-            ItemMeta m = g.getItemMeta(); if (m != null) { m.setDisplayName(" "); g.setItemMeta(m); }
-            for(int i=0;i<54;i++){
-                if (i%9==4 || i>=36) inv.setItem(i, g);
-            }
-            inv.setItem(aAccept, button(Material.LIME_TERRACOTTA,"§a내 수락"));
-            inv.setItem(bAccept, button(Material.LIME_TERRACOTTA,"§a상대 수락"));
+        int buttonIndexFor(Player p){ return p.getUniqueId().equals(a.getUniqueId())? 38 : 42; }
+
+        void toggleReady(Player p){
+            if (p.getUniqueId().equals(a.getUniqueId())) aReady = !aReady;
+            else if (p.getUniqueId().equals(b.getUniqueId())) bReady = !bReady;
+            updateButtons();
+            checkBothReady();
         }
 
-        ItemStack button(Material mat, String name){
-            ItemStack it = new ItemStack(mat);
-            ItemMeta m = it.getItemMeta(); if (m!=null){ m.setDisplayName(name); it.setItemMeta(m); }
-            return it;
+        void resetReady(){ aReady=false; bReady=false; updateButtons(); }
+
+        void updateButtons(){
+            ItemStack btnA = new ItemStack(aReady? Material.LIME_WOOL : Material.RED_WOOL, 1);
+            ItemMeta ma = btnA.getItemMeta(); ma.setDisplayName(aReady? "§a내 수락" : "§c내 수락"); btnA.setItemMeta(ma);
+            inv.setItem(buttonIndexFor(a), btnA);
+
+            ItemStack btnB = new ItemStack(bReady? Material.LIME_WOOL : Material.RED_WOOL, 1);
+            ItemMeta mb = btnB.getItemMeta(); mb.setDisplayName(bReady? "§a상대 수락" : "§c상대 수락"); btnB.setItemMeta(mb);
+            inv.setItem(buttonIndexFor(b), btnB);
         }
 
-        void open(){
-            a.openInventory(inv);
-            b.openInventory(inv);
-        }
-
-        boolean isMySlot(Player p, int raw){
-            boolean isA = p.getUniqueId().equals(a.getUniqueId());
-            int[] slots = isA? aSlots : bSlots;
-            for (int s: slots) if (s==raw) return true;
-            return false;
-        }
-        int firstEmptySlot(Player p){
-            boolean isA = p.getUniqueId().equals(a.getUniqueId());
-            int[] slots = isA? aSlots : bSlots;
-            for (int s: slots) if (inv.getItem(s)==null) return s;
-            return -1;
-        }
-        void resetReady(){
-            if (aReady){ aReady=false; inv.setItem(aAccept, button(Material.LIME_TERRACOTTA,"§a내 수락")); }
-            if (bReady){ bReady=false; inv.setItem(bAccept, button(Material.LIME_TERRACOTTA,"§a상대 수락")); }
-        }
-
-        
-        void handleClick(Player p, InventoryClickEvent e){
-            int raw = e.getRawSlot();
-            ClickType type = e.getClick();
-            // Accept buttons
-            if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
-                aReady = !aReady;
-                inv.setItem(aAccept, button(aReady ? Material.RED_TERRACOTTA : Material.LIME_TERRACOTTA, aReady ? "§c내 수락 해제" : "§a내 수락"));
-                if (aReady && bReady) { finish(); }
-                return;
-            }
-            if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
-                bReady = !bReady;
-                inv.setItem(bAccept, button(bReady ? Material.RED_TERRACOTTA : Material.LIME_TERRACOTTA, bReady ? "§c상대 수락 해제" : "§a상대 수락"));
-                if (aReady && bReady) { finish(); }
-                return;
-            }
-            // Move items within own area or from player inventory
-            if (raw < 54){
-                // clicks inside top
-                if (!isMySlot(p, raw)) return;
-                resetReady();
-                return;
-            } else {
-                // bottom inventory clicks: pickup to first empty slot
-                ItemStack cursor = e.getCurrentItem();
-                if (cursor == null || cursor.getType()==Material.AIR) return;
-                int dst = firstEmptySlot(p);
-                if (dst < 0){ p.sendMessage("§c자신의 거래 슬롯이 가득 찼습니다."); return; }
-                inv.setItem(dst, cursor.clone());
-                e.getView().getBottomInventory().setItem(e.getSlot(), null);
-                resetReady();
-            }
-
-            // If both ready, finalize
+        void checkBothReady(){
             if (aReady && bReady){
-                finish();
+                complete();
             }
         }
 
-        void finish(){
-            if (finished) return;
-            finished = true;
-
-            // Transfer items: A -> B, B -> A
-            for (int s : aSlots){
-                ItemStack it = inv.getItem(s);
-                if (it!=null) b.getInventory().addItem(it);
-                inv.setItem(s, null);
+        void complete(){
+            if (finished) return; finished = true;
+            // move items from aSlots to b, and bSlots to a
+            for (int sIdx : aSlots){
+                ItemStack it = inv.getItem(sIdx);
+                if (it!=null && it.getType()!=Material.AIR) b.getInventory().addItem(it.clone());
+                inv.setItem(sIdx, null);
             }
-            for (int s : bSlots){
-                ItemStack it = inv.getItem(s);
-                if (it!=null) a.getInventory().addItem(it);
-                inv.setItem(s, null);
+            for (int sIdx : bSlots){
+                ItemStack it = inv.getItem(sIdx);
+                if (it!=null && it.getType()!=Material.AIR) a.getInventory().addItem(it.clone());
+                inv.setItem(sIdx, null);
             }
-            a.sendMessage("§a거래 완료!");
-            b.sendMessage("§a거래 완료!");
+            a.sendMessage("§a거래 완료!"); b.sendMessage("§a거래 완료!");
             forceClose();
         }
 
         void cancel(String reason){
-            if (finished) { return; }
-            finished = true;
-            // return items back to each owner
-            java.util.function.BiConsumer<Player, Integer> back = (pl, slotIdx) -> {
+            if (finished) return;
+            java.util.function.BiConsumer<Player,Integer> back = (pl,slotIdx)->{
                 ItemStack it = inv.getItem(slotIdx);
-                if (it != null) {
-                    Map<Integer, ItemStack> overflow = pl.getInventory().addItem(it);
-                    if (!overflow.isEmpty()) for (ItemStack rem : overflow.values()) pl.getWorld().dropItemNaturally(pl.getLocation(), rem);
+                if (it!=null && it.getType()!=Material.AIR){
+                    java.util.Map<Integer, ItemStack> overflow = pl.getInventory().addItem(it.clone());
+                    if (!overflow.isEmpty()){
+                        for (ItemStack rem : overflow.values()){
+                            pl.getWorld().dropItemNaturally(pl.getLocation(), rem);
+                        }
+                    }
                     inv.setItem(slotIdx, null);
                 }
             };
@@ -255,6 +201,7 @@ class TradeSession {
             try { b.closeInventory(); } catch (Exception ignored) {}
         }
     }
+
 }
 
         void toggleReady(Player p){
