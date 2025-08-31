@@ -34,7 +34,7 @@ public class ShopManager implements Listener {
         if (!file.exists()) plugin.saveResource("shops.yml", false);
         conf = YamlConfiguration.loadConfiguration(file);
     }
-    private void save(){
+    public void save(){
         try { conf.save(file);}catch(IOException e){ e.printStackTrace(); }
     }
 
