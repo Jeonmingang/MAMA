@@ -1,11 +1,8 @@
-
 package com.minkang.usp2.managers;
 
 import com.minkang.usp2.Main;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,101 +16,69 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class TradeManager implements Listener {
-
     private final Main plugin;
-    /** trade request: targetUUID -> requesterUUID */
-    private final Map<UUID, UUID> pending = new HashMap<>();
-    /** active sessions indexed by each player's UUID */
     private final Map<UUID, TradeSession> sessions = new HashMap<>();
 
     public TradeManager(Main plugin){
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        // Clean up stray sessions on reload after a short delay
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            for (TradeSession s : new HashSet<>(sessions.values())) {
-                s.cancel("서버 리로드");
-            }
-            sessions.clear();
-        }, 200L);
     }
 
-    /** Send a request from 'from' to 'target' */
-    public void request(Player from, Player target){
-        if (from.getUniqueId().equals(target.getUniqueId())){
-            from.sendMessage("§c자기 자신과는 거래할 수 없습니다.");
-            return;
-        }
-        if (sessions.containsKey(from.getUniqueId()) || sessions.containsKey(target.getUniqueId())){
-            from.sendMessage("§c이미 진행 중인 거래가 있습니다.");
-            return;
-        }
-        pending.put(target.getUniqueId(), from.getUniqueId());
-        from.sendMessage("§a" + target.getName() + "§7에게 거래 요청을 보냈습니다.");
-        target.sendMessage("§e" + from.getName() + "§7님이 거래를 요청했습니다. §a/거래 수락 §7또는 §c/거래 거절");
-        target.playSound(target.getLocation(), Sound.UI_BUTTON_CLICK, 0.7f, 1.2f);
+    public void request(Player a, Player b){
+        // 간단: 즉시 세션 생성 (요청/수락 절차는 별도 구현 가능)
+        start(a, b);
     }
 
-        public boolean accept(Player target){
-        UUID req = pending.remove(target.getUniqueId());
-        if (req == null) return false;
-        Player from = Bukkit.getPlayer(req);
-        if (from == null) return false;
-        open(from, target);
-        return true;
+    private void start(Player a, Player b){
+        TradeSession s = new TradeSession(a, b);
+        sessions.put(a.getUniqueId(), s);
+        sessions.put(b.getUniqueId(), s);
     }
 
     @EventHandler
     public void onClick(InventoryClickEvent e){
-        try {
-            if (!(e.getWhoClicked() instanceof Player)) return;
-            Player p = (Player) e.getWhoClicked();
-            TradeSession s = sessions.get(p.getUniqueId());
-            if (s==null || e.getView().getTopInventory()!=s.inv) return;
-            e.setCancelled(true);
-            s.handleClick(p, e);
-        } catch (Throwable ex) {
-            e.setCancelled(true);
-            try { ((Player)e.getWhoClicked()).sendMessage("§c거래 오류: 이벤트가 취소되었습니다."); } catch (Throwable ignore) {}
+        TradeSession s = by(e.getWhoClicked().getUniqueId());
+        if (s==null) return;
+        if (!e.getView().getTopInventory().equals(s.inv)) return;
+
+        e.setCancelled(true);
+        Player p = (Player)e.getWhoClicked();
+
+        // 준비 버튼 클릭
+        if (e.getClickedInventory() == s.inv){
+            int raw = e.getRawSlot();
+            if (raw == s.buttonIndexFor(p)){
+                s.toggleReady(p);
+                return;
+            }
         }
+
+        // 아이템 이동 처리: 좌클릭으로 자신의 슬롯으로 올리기
+        if (e.getClickedInventory() != s.inv && e.getClick()== ClickType.LEFT){
+            int dst = s.firstEmptySlotFor(p);
+            if (dst < 0){ p.sendMessage("§c자신의 거래 슬롯이 가득 찼습니다."); return; }
+            ItemStack cursor = e.getCurrentItem();
+            if (cursor != null && cursor.getType()!=Material.AIR){
+                s.inv.setItem(dst, cursor.clone());
+                e.getView().getBottomInventory().setItem(e.getSlot(), null);
+                s.resetReady();
+            }
+        }
+
+        // 양측 준비 시 완료
+        s.checkBothReady();
     }
 
     @EventHandler
     public void onClose(InventoryCloseEvent e){
-        if (!(e.getPlayer() instanceof Player)) return;
-        Player p = (Player)e.getPlayer();
-        TradeSession s = sessions.get(p.getUniqueId());
+        TradeSession s = by(e.getPlayer().getUniqueId());
         if (s==null) return;
-        s.cancel("상대가 거래 창을 닫았습니다.");
+        if (!e.getInventory().equals(s.inv)) return;
+        s.cancel("창 닫힘");
     }
 
-    
-    public void cancel(Player p){
-        if (p == null) return;
-        TradeSession s = sessions.get(p.getUniqueId());
-        if (s != null) {
-            s.cancel("플레이어가 거래를 취소했습니다.");
-        }
-        sessions.remove(p.getUniqueId());
-    }
+    private TradeSession by(UUID id){ return sessions.get(id); }
 
-    public void closeAll(){
-        java.util.Set<TradeSession> uniq = new java.util.HashSet<>(sessions.values());
-        for (TradeSession s : uniq){
-            try { s.forceClose(); } catch (Throwable ignored) {}
-        }
-        sessions.clear();
-        pending.clear();
-    }
-
-    private void open(Player a, Player b){
-        // close existing if any for both players
-        cancel(a); cancel(b);
-        TradeSession s = new TradeSession(a, b);
-        sessions.put(a.getUniqueId(), s);
-        sessions.put(b.getUniqueId(), s);
-        s.open();
-    }
     class TradeSession {
         private final Player a, b;
         private final Inventory inv;
@@ -130,12 +95,20 @@ public class TradeManager implements Listener {
         }
 
         int buttonIndexFor(Player p){ return p.getUniqueId().equals(a.getUniqueId())? 38 : 42; }
+        int[] slotsFor(Player p){ return p.getUniqueId().equals(a.getUniqueId())? aSlots : bSlots; }
+
+        int firstEmptySlotFor(Player p){
+            for (int idx : slotsFor(p)){
+                ItemStack it = inv.getItem(idx);
+                if (it==null || it.getType()==Material.AIR) return idx;
+            }
+            return -1;
+        }
 
         void toggleReady(Player p){
             if (p.getUniqueId().equals(a.getUniqueId())) aReady = !aReady;
             else if (p.getUniqueId().equals(b.getUniqueId())) bReady = !bReady;
             updateButtons();
-            checkBothReady();
         }
 
         void resetReady(){ aReady=false; bReady=false; updateButtons(); }
@@ -158,7 +131,7 @@ public class TradeManager implements Listener {
 
         void complete(){
             if (finished) return; finished = true;
-            // move items from aSlots to b, and bSlots to a
+            // move items
             for (int sIdx : aSlots){
                 ItemStack it = inv.getItem(sIdx);
                 if (it!=null && it.getType()!=Material.AIR) b.getInventory().addItem(it.clone());
@@ -178,7 +151,7 @@ public class TradeManager implements Listener {
             java.util.function.BiConsumer<Player,Integer> back = (pl,slotIdx)->{
                 ItemStack it = inv.getItem(slotIdx);
                 if (it!=null && it.getType()!=Material.AIR){
-                    java.util.Map<Integer, ItemStack> overflow = pl.getInventory().addItem(it.clone());
+                    Map<Integer, ItemStack> overflow = pl.getInventory().addItem(it.clone());
                     if (!overflow.isEmpty()){
                         for (ItemStack rem : overflow.values()){
                             pl.getWorld().dropItemNaturally(pl.getLocation(), rem);
@@ -201,27 +174,4 @@ public class TradeManager implements Listener {
             try { b.closeInventory(); } catch (Exception ignored) {}
         }
     }
-
 }
-
-        void toggleReady(Player p){
-            if (p.getUniqueId().equals(a.getUniqueId())) aReady = !aReady;
-            else if (p.getUniqueId().equals(b.getUniqueId())) bReady = !bReady;
-            updateButtons();
-            checkBothReady();
-        }
-        void updateButtons(){
-            ItemStack btnA = new ItemStack(aReady? Material.LIME_WOOL : Material.RED_WOOL, 1);
-            ItemMeta ma = btnA.getItemMeta(); ma.setDisplayName(aReady? "§a내 수락" : "§c내 수락"); btnA.setItemMeta(ma);
-            inv.setItem(buttonIndexFor(a), btnA);
-
-            ItemStack btnB = new ItemStack(bReady? Material.LIME_WOOL : Material.RED_WOOL, 1);
-            ItemMeta mb = btnB.getItemMeta(); mb.setDisplayName(bReady? "§a상대 수락" : "§c상대 수락"); btnB.setItemMeta(mb);
-            inv.setItem(buttonIndexFor(b), btnB);
-        }
-        void checkBothReady(){
-            if (aReady && bReady){
-                // execute trade
-                complete();
-            }
-        }

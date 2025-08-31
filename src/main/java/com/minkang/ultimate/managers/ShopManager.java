@@ -185,9 +185,8 @@ public class ShopManager implements Listener {
             p.sendMessage("§a판매: §f"+it.getType().name()+" x"+totalItems+" §7(§a$"+totalPrice+"§7 입금)");
         }
     }
-}
 
-public void createOrUpdate(String name, boolean allowBuy, boolean allowSell, Double price){
+    public void createOrUpdate(String name, boolean allowBuy, boolean allowSell, Double price){
         // 기본 상점 설정 저장
         org.bukkit.configuration.file.FileConfiguration conf = getConfig();
         String base = "shops."+name+".";
