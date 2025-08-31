@@ -96,7 +96,34 @@ public class TradeManager implements Listener {
         s.cancel("상대가 거래 창을 닫았습니다.");
     }
 
-    class TradeSession {
+    
+    public void cancel(Player p){
+        if (p == null) return;
+        TradeSession s = sessions.get(p.getUniqueId());
+        if (s != null) {
+            s.cancel("플레이어가 거래를 취소했습니다.");
+        }
+        sessions.remove(p.getUniqueId());
+    }
+
+    public void closeAll(){
+        java.util.Set<TradeSession> uniq = new java.util.HashSet<>(sessions.values());
+        for (TradeSession s : uniq){
+            try { s.forceClose(); } catch (Throwable ignored) {}
+        }
+        sessions.clear();
+        pending.clear();
+    }
+
+    private void open(Player a, Player b){
+        // close existing if any for both players
+        cancel(a); cancel(b);
+        TradeSession s = new TradeSession(a, b);
+        sessions.put(a.getUniqueId(), s);
+        sessions.put(b.getUniqueId(), s);
+        s.open();
+    }
+class TradeSession {
         final Player a, b;
         final Inventory inv;
         boolean aReady=false, bReady=false;

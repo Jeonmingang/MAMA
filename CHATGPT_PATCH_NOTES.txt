@@ -1,2 +1,7 @@
 
 2025-08-31: Rewrote com.minkang.usp2.managers.TradeManager to correct scope errors and add robust TradeSession.
+
+--- 2025-08-31 TradeManager hotfix ---
+* Rewrote com.minkang.ultimate.managers.TradeManager from usp2 template (structure restored).
+* Added manager-level methods: cancel(Player), closeAll() to both usp2/ultimate TradeManager.
+* Removed misplaced cancel(String) at manager scope and duplicate finished flag.
