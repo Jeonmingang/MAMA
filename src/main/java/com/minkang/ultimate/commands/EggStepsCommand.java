@@ -16,10 +16,18 @@ public class EggStepsCommand implements CommandExecutor {
             if (slot<1 || slot>6){ p.sendMessage("§c1~6 사이"); return true; }
             org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "eggsteps " + p.getName() + " " + slot) ||
             org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:eggsteps " + p.getName() + " " + slot) ||
-            p.performCommand("eggsteps " + slot);
+            tryEggsteps(p, slot);
         } catch (NumberFormatException ex){
             p.sendMessage("§c숫자 입력");
         }
         return true;
     }
+
+    private void tryEggsteps(org.bukkit.entity.Player p, int slot){
+        String pName = p.getName();
+        boolean ok = org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "eggsteps " + pName + " " + slot);
+        if (!ok) ok = org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:eggsteps " + pName + " " + slot);
+        if (!ok) p.performCommand("eggsteps " + slot);
+    }
+
 }

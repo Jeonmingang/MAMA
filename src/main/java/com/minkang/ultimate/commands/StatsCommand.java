@@ -25,13 +25,21 @@ public class StatsCommand implements CommandExecutor {
             }
             if (label.equalsIgnoreCase("개체값")) org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "ivs " + player.getName() + " " + slot) ||
                 org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:ivs " + player.getName() + " " + slot) ||
-                player.performCommand("ivs " + slot);
+                tryPixelmonCommand(player, "ivs", slot);
             else if (label.equalsIgnoreCase("노력치")) org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "evs " + player.getName() + " " + slot) ||
                 org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:evs " + player.getName() + " " + slot) ||
-                player.performCommand("evs " + slot);
+                tryPixelmonCommand(player, "evs", slot);
         } catch (NumberFormatException e) {
             player.sendMessage(ChatColor.RED + "숫자를 입력하세요! (1~6)");
         }
         return true;
     }
+
+    private void tryPixelmonCommand(org.bukkit.entity.Player player, String base, int slot){
+        String pName = player.getName();
+        boolean ok = org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), base + " " + pName + " " + slot);
+        if (!ok) ok = org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "pixelmon:" + base + " " + pName + " " + slot);
+        if (!ok) player.performCommand(base + " " + slot);
+    }
+
 }
