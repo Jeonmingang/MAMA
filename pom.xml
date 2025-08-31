@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.minkang</groupId>
   <artifactId>UltimateServerPlugin2</artifactId>
-  <version>1.4.8</version>
+  <version>1.4.9</version>
   <name>UltimateServerPlugin2</name>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -45,23 +45,26 @@
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.5.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals><goal>shade</goal></goals>
-          </execution>
-        </executions>
-      </plugin>
+      
     </plugins>
+      <finalName>UltimateServerPlugin2-${project.version}</finalName>
   </build>
 <repositories>
-    <repository><id>citizens-repo</id><url>https://repo.citizensnpcs.co/</url></repository>
-    <repository><id>spigot-repo</id><url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url></repository>
-    <repository><id>sonatype</id><url>https://oss.sonatype.org/content/groups/public/</url></repository>
-    <repository><id>jitpack.io</id><url>https://jitpack.io</url></repository>
+    <repository>
+      <id>citizens-repo</id>
+      <url>https://repo.citizensnpcs.co/</url>
+    </repository>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
   </repositories>
 </project>
