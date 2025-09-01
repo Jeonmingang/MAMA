@@ -76,7 +76,6 @@ public class TradeManager implements Listener {
             e.setCancelled(true);
             try { ((Player)e.getWhoClicked()).sendMessage("§c거래 오류: 이벤트가 취소되었습니다."); } catch (Throwable ignore) {}
         }
-    }
 
     @EventHandler
     public void onClose(InventoryCloseEvent e){
@@ -205,7 +204,6 @@ class TradeSession {
             if (aReady && bReady){
                 finish();
             }
-        }
 
         void finish(){
             if (finished) return;
@@ -253,7 +251,6 @@ class TradeSession {
             try { b.closeInventory(); } catch (Exception ignored) {}
         }
     }
-}
 
         void toggleReady(Player p){
             if (p.getUniqueId().equals(a.getUniqueId())) aReady = !aReady;
@@ -275,4 +272,3 @@ class TradeSession {
                 // execute trade
                 complete();
             }
-        }
