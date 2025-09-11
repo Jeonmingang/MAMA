@@ -44,7 +44,7 @@ public class ShopCommand implements CommandExecutor {
         s.sendMessage(ChatColor.GRAY + "  /상점 삭제 <이름>");
         s.sendMessage(ChatColor.GRAY + "  /상점 목록");
         s.sendMessage(ChatColor.GRAY + "  /상점 추가 <이름> <구매|판매> <구매|판매> <금액> <금액> <수량> <슬롯>");
-        s.sendMessage(ChatColor.GRAY + "  /상점 추가삭제 <이름> <슬롯>);
+        s.sendMessage(ChatColor.GRAY + "  /상점 추가삭제 <이름> <슬롯>");
         s.sendMessage(ChatColor.GRAY + "  /상점 열기 <이름>");
         s.sendMessage(ChatColor.GRAY + "  /상점 연동 <이름>   " + ChatColor.DARK_GRAY + "← NPC 바라보고 실행");
         s.sendMessage(ChatColor.GRAY + "  /상점 연동해제      " + ChatColor.DARK_GRAY + "← NPC 바라보고 실행");
