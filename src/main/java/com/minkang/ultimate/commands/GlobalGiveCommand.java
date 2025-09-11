@@ -58,7 +58,7 @@ public class GlobalGiveCommand implements CommandExecutor {
         String itemName = gift.hasItemMeta() && gift.getItemMeta().hasDisplayName() ? gift.getItemMeta().getDisplayName() : gift.getType().name();
         String banner = ChatColor.DARK_GRAY + "====================\n"
                 + ChatColor.GOLD + "" + ChatColor.BOLD + "📦 전체지급 이벤트!\n"
-                + ChatColor.GRAY + "주최자: " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "\n"
+                + ChatColor.GRAY + "지급자: " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "\n"
                 + ChatColor.GRAY + "아이템: " + ChatColor.AQUA + itemName + ChatColor.GRAY + " × " + ChatColor.AQUA + amount + "\n"
                 + ChatColor.DARK_GRAY + "====================";
 
