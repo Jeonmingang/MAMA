@@ -33,6 +33,11 @@ commands:
     description: 상점 열기/관리
     permission: usp.shop.admin
     default: op
+
+  상점 리로드:
+    description: 상점 리로드
+    permission: usp.shop.admin
+    default: op
     
   야투:
     description: 야간투시
