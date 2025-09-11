@@ -1,0 +1,70 @@
+hunger-disable: true
+
+format:
+  currency: "$%,.2f"
+
+messages:
+  prefix: "&6[서버] &r"
+  no-perm: "&c권한이 없습니다."
+  player-only: "&c플레이어만 사용 가능합니다."
+
+cheque:
+  material: PAPER
+  name: "&a&l수표"
+  lore:
+    - "&7금액: &e%amount%"
+    - "&f우클릭 시 입금됩니다."
+  glow: true
+
+repairticket:
+  material: NAME_TAG
+  name: "&b[수리권]"
+  lore:
+    - "&7우클릭: 손에 든 아이템 수리"
+  glow: true
+
+lock:
+  item:
+    material: TRIPWIRE_HOOK
+    name: "&6[잠금권]"
+    lore:
+      - "&7우클릭: 바라보는 블록을 잠금"
+  protect-blocks:
+    - CHEST
+    - TRAPPED_CHEST
+    - BARREL
+    - FURNACE
+    - BLAST_FURNACE
+    - SMOKER
+    - HOPPER
+    - DISPENSER
+    - DROPPER
+    - OAK_DOOR
+    - SPRUCE_DOOR
+    - BIRCH_DOOR
+    - JUNGLE_DOOR
+    - ACACIA_DOOR
+    - DARK_OAK_DOOR
+    - IRON_DOOR
+    - OAK_TRAPDOOR
+
+trade:
+  request-timeout-seconds: 20
+
+
+shop:
+  item-lore:
+    default:
+      - "&7이름: &f%item_name%"
+      - "&7모드: &e%mode%"
+      - "&7단위수량: &b%unit%"
+      - "&7구매가: &a%buy_price%"
+      - "&7판매가: &c%sell_price%"
+      - "&8상점: %shop_name%"
+
+
+global-give:
+  take-from-sender: false   # true면 지급 수량만큼 주최자 인벤에서 차감(전체 인원 × 수량)
+  fireworks: true           # 지급 시 주최자 위치에 폭죽
+  title: true               # 지급 시 타이틀 표시
+  sound: true               # 지급 시 사운드 재생
