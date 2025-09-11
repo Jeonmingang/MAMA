@@ -1,0 +1,52 @@
+name: UltimateServerPlugin2
+main: com.minkang.ultimate.Main
+version: 1.4.24
+api-version: 1.16
+author: MinGang
+softdepend: [Vault, Essentials, Citizens]
+commands:
+  개체값:
+    description: Pixelmon IVs (한글)
+  노력치:
+    description: Pixelmon EVs (한글)
+  알걸음:
+    description: Pixelmon eggsteps (한글)
+  배틀종료:
+    description: Pixelmon endbattle
+    permission: usp.battle
+
+  돈:
+    description: 잔액/송금/순위
+    aliases: [balance, bal]
+
+  수표:
+    description: 수표 발급(소지금 차감, 무권한)
+
+  수리권:
+    description: 수리권 발급
+  상점:
+    description: 상점 열기/관리/연동
+
+  거래:
+    description: 거래 요청/수락/거절
+
+  잠금:
+    description: 잠금 시간|영구|추가|목록|해제
+
+  잠금권:
+    description: 잠금권 발급(영구/시간)
+  야투:
+    description: 야간투시 토글(무권한)
+
+  상점리로드:
+    description: 상점/설정 리로드
+
+  전체지급:
+    description: 손에 든 아이템을 전체에게 지급
+
+  추첨:
+    description: 3 2 1 카운트다운 후 랜덤 당첨자 발표
+
+permissions:
+  mama.trade.use:
+    default: true
