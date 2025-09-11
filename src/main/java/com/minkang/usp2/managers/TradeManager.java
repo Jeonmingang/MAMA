@@ -154,7 +154,10 @@ public class TradeManager implements Listener {
             return -1;
         }
         void resetReady(){
-            if (aReady){ aReady=false; inv.setItem(aAccept, button(Material.LIME_CONCRETE,"§a내 수락")); }
+            aReady = false;
+            bReady = false;
+            updateButtons();
+        }
             if (bReady){ bReady=false; inv.setItem(bAccept, button(Material.LIME_CONCRETE,"§a상대 수락"));             inv.setItem(cancelSlot, button(Material.BARRIER,"§c거래 취소"));
 }
         }
@@ -167,14 +170,11 @@ public class TradeManager implements Listener {
 // Accept buttons
             if (raw==aAccept || raw==bAccept){
                 if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
-                    aReady = !aReady; inv.setItem(aAccept, button(aReady?Material.RED_CONCRETE:Material.LIME_CONCRETE, aReady?"§c내 수락 완료":"§a내 수락"));
-                } else if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
-                    bReady = !bReady; inv.setItem(bAccept, button(bReady?Material.RED_CONCRETE:Material.LIME_CONCRETE, bReady?"§c상대 수락 완료":"§a상대 수락"));
-                }
-                a.playSound(a.getLocation(), Sound.UI_BUTTON_CLICK,1,1);
-                b.playSound(b.getLocation(), Sound.UI_BUTTON_CLICK,1,1);
-                if (aReady && bReady) { finalizeTrade(); }
+                aReady = !aReady;
+                updateButtons();
+                checkBothReady();
                 return;
+            }
             }
 
             // Player inventory shift-click -> move to own trade area
@@ -269,3 +269,10 @@ public class TradeManager implements Listener {
         }
     }
 }
+
+        void checkBothReady(){
+            if (aReady && bReady){
+                finish();
+            }
+        }
+        

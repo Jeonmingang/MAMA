@@ -177,7 +177,10 @@ public class TradeManager implements Listener {
         }
 
         void resetReady(){
-            if (aReady){ aReady=false; inv.setItem(aAccept, button(Material.LIME_CONCRETE,"§a내 수락")); }
+            aReady = false;
+            bReady = false;
+            updateButtons();
+        }
             if (bReady){ bReady=false; inv.setItem(bAccept, button(Material.LIME_CONCRETE,"§a상대 수락"));             inv.setItem(cancelSlot, button(Material.BARRIER,"§c거래 취소"));
 }
         }
@@ -190,15 +193,17 @@ public class TradeManager implements Listener {
             if (raw==cancelSlot) { cancel("플레이어가 거래를 취소했습니다."); return; }
 if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
                 aReady = !aReady;
-                inv.setItem(aAccept, button(aReady?Material.RED_CONCRETE:Material.LIME_CONCRETE,
-                        aReady?"§c수락완료":"§a내 수락"));
+                updateButtons();
+                checkBothReady();
                 return;
+            }
             }
             if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
                 bReady = !bReady;
-                inv.setItem(bAccept, button(bReady?Material.RED_CONCRETE:Material.LIME_CONCRETE,
-                        bReady?"§c상대 수락완료":"§a상대 수락"));
+                updateButtons();
+                checkBothReady();
                 return;
+            }
             }
 
             if (raw < 54){
@@ -272,13 +277,17 @@ if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
         }
 
         void updateButtons(){
-            ItemStack btnA = new ItemStack(aReady? Material.LIME_CONCRETE : Material.RED_CONCRETE, 1);
-            ItemMeta ma = btnA.getItemMeta(); ma.setDisplayName(aReady? "§a내 수락" : "§c내 수락"); btnA.setItemMeta(ma);
+            // READY = RED, NOT READY = LIME
+            ItemStack btnA = button(aReady ? Material.RED_CONCRETE : Material.LIME_CONCRETE,
+                    aReady ? "§c수락완료" : "§a내 수락");
             inv.setItem(aAccept, btnA);
 
-            ItemStack btnB = new ItemStack(bReady? Material.LIME_CONCRETE : Material.RED_CONCRETE, 1);
-            ItemMeta mb = btnB.getItemMeta(); mb.setDisplayName(bReady? "§a상대 수락" : "§c상대 수락"); btnB.setItemMeta(mb);
+            ItemStack btnB = button(bReady ? Material.RED_CONCRETE : Material.LIME_CONCRETE,
+                    bReady ? "§c상대 수락완료" : "§a상대 수락");
             inv.setItem(bAccept, btnB);
+
+            // keep cancel button intact
+            inv.setItem(cancelSlot, button(Material.BARRIER,"§c거래 취소"));
         }
 
         void checkBothReady(){
