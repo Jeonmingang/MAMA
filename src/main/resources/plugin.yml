@@ -36,6 +36,9 @@ commands:
     
   야투:
     description: 야간투시
+
+  거래:
+    description: 거래/신청
     
   잠금:
     description: 잠금실행
