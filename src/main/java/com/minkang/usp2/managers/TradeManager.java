@@ -1,4 +1,3 @@
-
 package com.minkang.usp2.managers;
 
 import com.minkang.usp2.Main;
@@ -20,8 +19,8 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 /**
- * Clean, robust trade system (1.16.5 / Java 8).
- * Only this class replaces the broken trade code. Other features untouched.
+ * Clean, robust trade system (1.16.5 / Java 8) for USP2 tree.
+ * Only trade logic is handled here; other features untouched.
  */
 public class TradeManager implements Listener {
 
