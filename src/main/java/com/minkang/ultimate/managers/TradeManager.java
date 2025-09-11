@@ -181,9 +181,6 @@ public class TradeManager implements Listener {
             bReady = false;
             updateButtons();
         }
-            if (bReady){ bReady=false; inv.setItem(bAccept, button(Material.LIME_CONCRETE,"§a상대 수락"));             inv.setItem(cancelSlot, button(Material.BARRIER,"§c거래 취소"));
-}
-        }
 
         void handleClick(Player p, InventoryClickEvent e){
             int raw = e.getRawSlot();
@@ -197,15 +194,12 @@ if (raw==aAccept && p.getUniqueId().equals(a.getUniqueId())){
                 checkBothReady();
                 return;
             }
-            }
             if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
                 bReady = !bReady;
                 updateButtons();
                 checkBothReady();
                 return;
             }
-            }
-
             if (raw < 54){
                 if (!isMySlot(p, raw)) return;
                 resetReady();

@@ -158,9 +158,6 @@ public class TradeManager implements Listener {
             bReady = false;
             updateButtons();
         }
-            if (bReady){ bReady=false; inv.setItem(bAccept, button(Material.LIME_CONCRETE,"§a상대 수락"));             inv.setItem(cancelSlot, button(Material.BARRIER,"§c거래 취소"));
-}
-        }
 
         void handleClick(Player p, InventoryClickEvent e){
             int raw = e.getRawSlot();
@@ -175,8 +172,12 @@ public class TradeManager implements Listener {
                 checkBothReady();
                 return;
             }
+            if (raw==bAccept && p.getUniqueId().equals(b.getUniqueId())){
+                bReady = !bReady;
+                updateButtons();
+                checkBothReady();
+                return;
             }
-
             // Player inventory shift-click -> move to own trade area
             int topSize = e.getInventory().getSize();
             if (raw >= topSize){
