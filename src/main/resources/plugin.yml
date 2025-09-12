@@ -26,6 +26,11 @@ commands:
     description: 수표 발급(소지금 차감, 무권한)
 
   수리권:
+    description: 수리권
+    permission: usp.fix.admin
+    default: op
+
+  수리권 발급:
     description: 수리권 발급
     permission: usp.fix.admin
     default: op
