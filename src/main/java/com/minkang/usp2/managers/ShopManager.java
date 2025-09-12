@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShopManager implements Listener {
+    private static ShopManager instance;
+    public static ShopManager getInstance(){ return instance; }
+    public static void setInstance(ShopManager m){ instance = m; }
+
     private final Main plugin;
     // Citizens NPC id -> shop key(name)
     private final Map<Integer, String> npcBindings = new HashMap<>();
