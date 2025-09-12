@@ -27,6 +27,7 @@ commands:
 
   수리권:
     description: 수리권 발급
+    permission: usp.fix.admin
     default: op
     
   상점:
@@ -78,4 +79,6 @@ permissions:
   usp.kit.reset:
     default: op
   usp.locks.admin:
+    default: op
+  usp.fix.admin:
     default: op
