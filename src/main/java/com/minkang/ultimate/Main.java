@@ -48,6 +48,11 @@ private EconomyManager economy;
         repair = new RepairManager(this);
         trade = new TradeManager(this);
         shop = new ShopManager(this);
+
+// NPC right-click -> open shop (no permission required; runs console commands from config)
+com.minkang.ultimate.shop.ShopIntegrationManager shopIntegration = new com.minkang.ultimate.shop.ShopIntegrationManager(this);
+getServer().getPluginManager().registerEvents(new com.minkang.ultimate.listeners.ShopNpcListener(this, shopIntegration), this);
+
         lock = new LockManager(this);
 
         // listeners

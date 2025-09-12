@@ -56,6 +56,18 @@ public class ShopCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Reload entry point: either command label '상점리로드' or subcommand '리로드'
+        if ("상점리로드".equalsIgnoreCase(label) || (args.length>0 && ("리로드".equalsIgnoreCase(args[0]) || "reload".equalsIgnoreCase(args[0])))){
+            if (!sender.hasPermission("usp.shop.admin")) { sender.sendMessage("§c권한이 없습니다: usp.shop.admin"); return true; }
+            try {
+                com.minkang.ultimate.shop.ShopIntegrationManager integ = new com.minkang.ultimate.shop.ShopIntegrationManager(Main.getPlugin(Main.class));
+                integ.reload(sender);
+            } catch (Throwable t){ /* ignore */ }
+            try { Main.getPlugin(Main.class).shop().reload(); } catch (Throwable t) { /* ignore */ }
+            sender.sendMessage("§a상점 연동을 리로드했습니다.");
+            return true;
+        }
+
         if (args.length == 0){ sendHelp(sender); return true; }
 
         String sub = args[0];
