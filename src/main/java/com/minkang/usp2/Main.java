@@ -23,14 +23,12 @@ public class Main extends JavaPlugin {
 private EconomyManager economy;
     private BanknoteManager banknote;
     private RepairManager repair;
-    private TradeManager trade;
     private ShopManager shop;
     private LockManager lock;
 
     public EconomyManager eco(){ return economy; }
     public BanknoteManager bank(){ return banknote; }
     public RepairManager repair(){ return repair; }
-    public TradeManager trade(){ return trade; }
     public ShopManager shop(){ return shop; }
     public LockManager lock(){ return lock; }
 
@@ -40,7 +38,6 @@ private EconomyManager economy;
         economy = new EconomyManager(this);
         banknote = new BanknoteManager(this);
         repair = new RepairManager(this);
-        trade = new TradeManager(this);
         shop = new ShopManager(this);
         lock = new LockManager(this);
 
@@ -73,7 +70,6 @@ private EconomyManager economy;
         bindCmd("돈", new MoneyCommand(this));
         bindCmd("수표", new ChequeCommand(this));
         bindCmd("수리권", new RepairTicketCommand(this));
-        bindCmd("거래", new TradeCommand(this));
         ShopCommand shopCmd = new ShopCommand(this);
         bindCmd("상점", shopCmd);
         bindCmd("상점리로드", shopCmd);
