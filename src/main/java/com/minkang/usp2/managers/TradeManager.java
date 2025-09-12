@@ -342,3 +342,5 @@ public class TradeManager implements Listener {
     //         if (!isTradeInventory(e.getInventory())) return;
     //         e.setCancelled(true);
     //     }
+
+}
