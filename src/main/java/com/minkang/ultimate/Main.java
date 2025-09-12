@@ -52,8 +52,9 @@ private EconomyManager economy;
         economy = new EconomyManager(this);
         banknote = new BanknoteManager(this);
         repair = new RepairManager(this);
-        trade = new TradeManager(this);
-        shop = new ShopManager(this);
+        trade = /* TRADE_DISABLED new TradeManager(this);
+         */
+shop = new ShopManager(this);
 
 
 

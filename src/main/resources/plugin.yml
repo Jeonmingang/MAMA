@@ -1,6 +1,6 @@
 name: UltimateServerPlugin2
 main: com.minkang.ultimate.Main
-version: 1.4.47
+version: 1.4.49
 api-version: 1.16
 author: MinGang
 softdepend: [Vault, Essentials, Citizens]
@@ -44,7 +44,8 @@ commands:
 
   야투:
     description: 야간투시
-
+# TRADE_DISABLED
+# 
   거래:
     description: 거래/신청
 
