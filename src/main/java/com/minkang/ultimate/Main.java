@@ -13,8 +13,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.CommandExecutor;
+import com.minkang.ultimate.kit.KitManager;
+import com.minkang.ultimate.kit.KitGuiListener;
 
 public class Main extends JavaPlugin {
+    private KitManager kitManager;
+    private KitGuiListener kitGuiListener;
+
     private void logSevere(String msg, Throwable t){
         getLogger().severe(msg + (t!=null? (" :: " + t.getMessage()) : ""));
     }
@@ -64,7 +69,7 @@ private EconomyManager economy;
             if (getCommand("상점") != null) getCommand("상점").setExecutor(new ShopCommand(this));
             if (getCommand("전체지급") != null) getCommand("전체지급").setExecutor(new GlobalGiveCommand(this));
             if (getCommand("추첨") != null) getCommand("추첨").setExecutor(new RaffleCommand(this));
-            if (getCommand("기본템") != null) getCommand("기본템").setExecutor(new KitCommand(this, kitManager, kitGuiListener));
+            if (getCommand("기본템") != null) getCommand("기본템").setExecutor(new KitCommand(this, this.kitManager, this.kitGuiListener));
         } catch (Throwable ignored) {}
 
 // ===== Register command executors (ensured) =====
@@ -76,7 +81,7 @@ private EconomyManager economy;
             if (getCommand("상점") != null) getCommand("상점").setExecutor(new ShopCommand(this));
             if (getCommand("전체지급") != null) getCommand("전체지급").setExecutor(new GlobalGiveCommand(this));
             if (getCommand("추첨") != null) getCommand("추첨").setExecutor(new RaffleCommand(this));
-            if (getCommand("기본템") != null) getCommand("기본템").setExecutor(new KitCommand(this, kitManager, kitGuiListener));
+            if (getCommand("기본템") != null) getCommand("기본템").setExecutor(new KitCommand(this, this.kitManager, this.kitGuiListener));
         } catch (Throwable ignored) {}
 // ===== Register commands (core) =====
         if (getCommand("야투") != null) getCommand("야투").setExecutor(new NightVisionCommand());
@@ -86,7 +91,7 @@ private EconomyManager economy;
         if (getCommand("상점") != null) getCommand("상점").setExecutor(new ShopCommand(this));
         if (getCommand("전체지급") != null) getCommand("전체지급").setExecutor(new GlobalGiveCommand(this));
         if (getCommand("추첨") != null) getCommand("추첨").setExecutor(new RaffleCommand(this));
-        if (getCommand("기본템") != null) getCommand("기본템").setExecutor(new KitCommand(this, kitManager, kitGuiListener));
+        if (getCommand("기본템") != null) getCommand("기본템").setExecutor(new KitCommand(this, this.kitManager, this.kitGuiListener));
 
 // NPC right-click -> open shop (no permission required; runs console commands from config)
 getServer().getPluginManager().registerEvents(new com.minkang.ultimate.listeners.ShopNpcListener(this), this);
