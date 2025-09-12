@@ -4,16 +4,17 @@ version: 1.4.39
 api-version: 1.16
 author: MinGang
 softdepend: [Vault, Essentials, Citizens]
+
 commands:
   개체값:
     description: Pixelmon IVs (한글)
-    
+
   노력치:
     description: Pixelmon EVs (한글)
-    
+
   알걸음:
     description: Pixelmon eggsteps (한글)
-    
+
   배틀종료:
     description: Pixelmon endbattle
     permission: usp.battle
@@ -28,62 +29,62 @@ commands:
   수리권:
     description: 수리권
     permission: usp.fix.admin
-    default: op
 
   수리권 발급:
     description: 수리권 발급
     permission: usp.fix.admin
-    default: op
-    
+
   상점:
     description: 상점 열기/관리
     permission: usp.shop.admin
-    default: op
 
   상점리로드:
     description: 상점 리로드
     permission: usp.shop.admin
-    default: op
-    
+
   야투:
     description: 야간투시
 
   거래:
     description: 거래/신청
-    
+
   잠금:
     description: 잠금실행
-    
+
   잠금권:
-    description: 상점 열기/관리
+    description: 잠금 관련 관리자 명령
     permission: usp.locks.admin
-    default: op
-    
+
   전체지급:
     description: 손에 든 아이템을 전체에게 지급
     permission: usp.globalgive
-    default: op
-    
+
   추첨:
     description: 3 2 1 카운트다운 후 랜덤 당첨자 발표
     permission: usp.raffle
-    default: op
-    
+
   기본템:
     description: 기본템 수령/설정/초기화
 
 permissions:
-  usp.fix.admin
+  usp.fix.admin:
+    description: 수리권/관련 관리자 권한
     default: op
   usp.shop.admin:
+    description: 상점 관리자 권한
     default: op
   usp.globalgive:
+    description: 전체지급 명령어 권한
     default: op
   usp.raffle:
+    description: 추첨 명령어 권한
     default: op
   usp.kit.setup:
+    description: 기본템 설정 GUI 열기
     default: op
   usp.kit.reset:
+    description: 기본템 수령 기록 초기화
     default: op
   usp.locks.admin:
+    description: 잠금/잠금권 관리자 권한
     default: op
