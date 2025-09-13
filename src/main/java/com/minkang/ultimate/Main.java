@@ -34,7 +34,7 @@ public class Main extends JavaPlugin {
 private EconomyManager economy;
     private BanknoteManager banknote;
     private RepairManager repair;
-    private TradeManager trade;
+
     private ShopManager shop;
     private LockManager lock;
 

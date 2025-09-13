@@ -81,7 +81,7 @@ getLogger().info("UltimateServerPlugin enabled.");
 
     @Override
     public void onDisable() {
-        trade.closeAll();
+// TRADE_REMOVED:         trade.closeAll();
         getLogger().info("UltimateServerPlugin disabled.");
     }
 }
