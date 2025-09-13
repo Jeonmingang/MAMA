@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.minkang</groupId>
   <artifactId>UltimateServerPlugin2</artifactId>
-  <version>1.4.61</version>
+  <version>1.4.62</version>
   <name>UltimateServerPlugin2</name>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>

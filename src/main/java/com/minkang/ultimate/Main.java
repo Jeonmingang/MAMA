@@ -140,7 +140,7 @@ getServer().getPluginManager().registerEvents(new com.minkang.ultimate.listeners
 KitManager kitManager = KitManager.getInstance();
         KitGuiListener kitGui = new KitGuiListener();
         getServer().getPluginManager().registerEvents(kitGui, this);
-        bindCmd("기본템", new com.minkang.ultimate.commands.KitCommand(this, kitManager, kitGui));
+        bindCmd("기본템", new com.minkang.ultimate.commands.KitCommand());
         getServer().getPluginManager().registerEvents(new JoinQuitListener(this), this);
         getLogger().info("UltimateServerPlugin enabled.");
     }
