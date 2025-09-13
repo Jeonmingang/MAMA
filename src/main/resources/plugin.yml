@@ -38,7 +38,10 @@ commands:
     description: 상점 열기/관리
     permission: usp.shop.admin
 
-  상점리로드:
+  상점 우클릭:
+    description: 상점 우클릭
+    
+  상점 리로드:
     description: 상점 리로드
     permission: usp.shop.admin
 
