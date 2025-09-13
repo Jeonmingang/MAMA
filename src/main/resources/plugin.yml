@@ -14,6 +14,9 @@ commands:
 
   알걸음:
     description: Pixelmon eggsteps (한글)
+    
+  기본템:
+    description: 기본템
 
   배틀종료:
     description: Pixelmon endbattle
