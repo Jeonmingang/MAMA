@@ -26,6 +26,10 @@ commands:
     description: 잔액/송금/순위
     aliases: [balance, bal]
 
+  우클릭열기:
+    description: NPC 우클릭 전용 상점 열기
+    usage: /우클릭열기 <상점키>
+
   수표:
     description: 수표 발급(소지금 차감, 무권한)
 
@@ -77,12 +81,6 @@ permissions:
   usp.kit.admin:
     description: 기본템 관리 (설정/초기화)
     default: op
-  usp.kit.use:
-    description: 기본템 받기
-    default: true
-  우클릭열기:
-    description: NPC 우클릭 전용 상점 열기
-    usage: /우클릭열기 <상점키>
   usp.shop.rightopen:
     description: /우클릭열기 사용자 권한(선택)
     default: true
