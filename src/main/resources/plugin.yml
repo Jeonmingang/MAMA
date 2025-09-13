@@ -1,6 +1,6 @@
 name: UltimateServerPlugin2
 main: com.minkang.ultimate.Main
-version: 1.4.55
+version: 1.4.56
 api-version: 1.16
 author: MinGang
 softdepend: [Vault, Essentials, Citizens]
@@ -49,3 +49,8 @@ commands:
     description: 야간투시
 # TRADE_DISABLED
 # 
+
+permissions:
+  usp.shop.rightclick:
+    description: NPC 우클릭/명령으로 상점 열기 권한
+    default: false
