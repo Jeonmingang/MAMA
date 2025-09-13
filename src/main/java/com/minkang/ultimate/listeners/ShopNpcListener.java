@@ -79,7 +79,7 @@ public class ShopNpcListener implements Listener {
         if (key == null) return;
         if (throttled(p)) { e.setCancelled(true); return; }
         e.setCancelled(true);
-        org.bukkit.Bukkit.getScheduler().runTask(plugin, new Runnable(){ @Override public void run(){ p.performCommand("우클릭상점 " + key); }});
+        org.bukkit.Bukkit.getScheduler().runTask(plugin, new Runnable(){ @Override public void run(){ p.performCommand("상점 열기 " + key); }});
     }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onInteractAtEntity(PlayerInteractAtEntityEvent e){
@@ -89,6 +89,6 @@ public class ShopNpcListener implements Listener {
         if (key == null) return;
         if (throttled(p)) { e.setCancelled(true); return; }
         e.setCancelled(true);
-        org.bukkit.Bukkit.getScheduler().runTask(plugin, new Runnable(){ @Override public void run(){ p.performCommand("우클릭상점 " + key); }});
+        org.bukkit.Bukkit.getScheduler().runTask(plugin, new Runnable(){ @Override public void run(){ p.performCommand("상점 열기 " + key); }});
     }
 }

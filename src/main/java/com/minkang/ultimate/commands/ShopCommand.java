@@ -223,6 +223,8 @@ public class ShopCommand implements CommandExecutor {
             return true;
         }
 if ("연동".equalsIgnoreCase(sub)) {
+            if (!sender.hasPermission("usp.shop.admin")) { sender.sendMessage("§c권한이 없습니다. (usp.shop.admin)"); return true; }
+
             if (!(sender instanceof Player)) { sender.sendMessage("§c플레이어만 사용 가능합니다."); return true; }
             if (args.length < 2) { sender.sendMessage("§c사용법: /상점 연동 <상점이름>"); return true; }
             Player p = (Player) sender;

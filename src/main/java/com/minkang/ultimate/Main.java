@@ -1,6 +1,6 @@
 
 package com.minkang.ultimate;
-import com.minkang.ultimate.commands.RightOpenCommand;
+
 import com.minkang.ultimate.commands.KitCommand;
 import com.minkang.ultimate.commands.GiveAllCommand;
 import com.minkang.ultimate.commands.DrawCommand;
