@@ -18,8 +18,11 @@ public class RightOpenCommand implements CommandExecutor {
             return true;
         }
         String key = args[0];
-        try { ShopManager.getInstance().open(p, key); }
-        catch (Throwable t) { p.sendMessage(ChatColor.RED + "상점을 열 수 없습니다."); }
+        try {
+            ShopManager.getInstance().open(p, key);
+        } catch (Throwable t) {
+            p.sendMessage(ChatColor.RED + "상점을 열 수 없습니다.");
+        }
         return true;
     }
 }
