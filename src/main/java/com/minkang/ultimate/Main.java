@@ -62,6 +62,13 @@ getServer().getPluginManager().registerEvents(new ShopGuiListener(this), this);
 // TRADE_DISABLED: trade manager removed
         // ===== Ensure command executors are registered =====
         try {
+
+// === Pixelmon korean aliases ===
+if (getCommand("개체값") != null) getCommand("개체값").setExecutor(new com.minkang.ultimate.commands.PixelmonAliasCommand());
+if (getCommand("노력치") != null) getCommand("노력치").setExecutor(new com.minkang.ultimate.commands.PixelmonAliasCommand());
+if (getCommand("알걸음") != null) getCommand("알걸음").setExecutor(new com.minkang.ultimate.commands.EggStepsCommand());
+if (getCommand("힐") != null) getCommand("힐").setExecutor(new com.minkang.ultimate.commands.HealAliasCommand());
+
             if (getCommand("야투") != null) getCommand("야투").setExecutor(new NightVisionCommand());
             if (getCommand("잠금") != null) getCommand("잠금").setExecutor(new LockCommand(this));
             if (getCommand("잠금권") != null) getCommand("잠금권").setExecutor(new LockTokenCommand(this));

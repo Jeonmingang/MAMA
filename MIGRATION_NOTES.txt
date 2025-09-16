@@ -1,0 +1,14 @@
+Command alias additions (v1)
+
+Added commands:
+- /알걸음 1~6  -> forwards to /eggsteps <slot> (console dispatch inside EggStepsCommand)
+- /개체값 1~6  -> forwards to /ivs <slot>
+- /노력치 1~6 -> forwards to /evs <slot>
+- /힐         -> forwards to /pokeheal
+
+Files changed/added:
+- src/main/java/com/minkang/ultimate/commands/HealAliasCommand.java (NEW)
+- src/main/java/com/minkang/ultimate/Main.java (register executors)
+- src/main/resources/plugin.yml (added '힐' command entry)
+
+No other features touched.

@@ -6,6 +6,9 @@ author: MinGang
 softdepend: [Vault, Essentials, Citizens]
 
 commands:
+  힐:
+    description: Pixelmon pokeheal (한글)
+
   개체값:
     description: Pixelmon IVs (한글)
 
