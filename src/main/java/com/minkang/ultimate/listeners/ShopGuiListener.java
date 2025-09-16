@@ -90,11 +90,43 @@ public class ShopGuiListener implements Listener {
             if (econ == null){ p.sendMessage(ChatColor.RED + "Vault 연동이 없습니다."); return; }
             if (econ.getBalance(p) < total){ p.sendMessage(ChatColor.RED + "잔액이 부족합니다. 필요: " + total); return; }
 
-            ItemStack give = clicked.clone();
-            give.setAmount(qty);
-            if (p.getInventory().firstEmpty() == -1){
-                p.sendMessage(ChatColor.RED + "인벤토리에 공간이 부족합니다.");
-                return;
+            // Build a clean delivery item: use original item from config, not the GUI-decorated copy
+ItemStack base = itemSec.getItemStack("item");
+ItemStack give;
+if (base != null) {
+    give = base.clone();
+} else {
+    // Fallback: strip GUI hint lores from the clicked item
+    give = clicked.clone();
+    if (give.hasItemMeta()) {
+        ItemMeta _m = give.getItemMeta();
+        if (_m != null && _m.hasLore()) {
+            java.util.List<String> _l = new java.util.ArrayList<>(_m.getLore());
+            java.util.Iterator<String> it = _l.iterator();
+            while (it.hasNext()) {
+                String line = ChatColor.stripColor(it.next());
+                if (line == null) continue;
+                line = line.toLowerCase();
+                if (line.contains("좌클릭") || line.contains("우클릭") || line.contains("쉬프트") ||
+                    line.contains("구매가") || line.contains("판매가") || line.contains("단위수량") ||
+                    line.contains("mode") || line.contains("unit") || line.contains("buy") || line.contains("sell")) {
+                    it.remove();
+                }
+            }
+            _m.setLore(_l);
+            give.setItemMeta(_m);
+        }
+    }
+}
+give.setAmount(qty);
+if (p.getInventory().firstEmpty() == -1){
+    p.sendMessage(ChatColor.RED + "인벤토리에 공간이 부족합니다.");
+    return;
+}
+econ.withdrawPlayer(p, total);
+p.getInventory().addItem(give);
+p.sendMessage(ChatColor.GREEN + "" + qty + "개 구매 ( -" + total + " )");
+return;
             }
             econ.withdrawPlayer(p, total);
             p.getInventory().addItem(give);
