@@ -53,10 +53,6 @@ commands:
     description: 상점 열기/관리
     usage: /상점 [열기|생성|삭제|추가삭제|연동|해제|목록|리로드] ...
 
-  우클릭상점:
-    description: NPC 우클릭 전용 상점 열기
-    usage: /우클릭상점 <상점키>
-
   기본템:
     description: 기본템 받기/설정/초기화
     usage: /기본템 [설정|초기화 <닉>]
