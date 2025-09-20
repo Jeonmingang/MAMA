@@ -1,0 +1,8 @@
+Money feature update (v1.5.1)
+- /돈, /돈 보내기, /돈 순위 : 기존 동작을 그대로 유지 (MAMA-main (2).zip 기준)
+- 신규(오피) 서브명령 추가:
+  * /돈 설정 주기 <플레이어> <금액>   → Vault 경제에 입금 (OfflinePlayer 지원)
+  * /돈 설정 차감 <플레이어> <금액>   → Vault 경제에서 출금
+  * 권한: usp.money.admin (default: op)
+- plugin.yml version: 1.5.1
+- 다른 기능은 전혀 변경하지 않음.
