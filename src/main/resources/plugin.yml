@@ -102,16 +102,11 @@ permissions:
   usp.fix.admin:
     description: 수리권/수리권 발급 관리 권한
     default: op
-
-  usp.legendarytime:
-    description: /전설시간 사용 권한
-    default: true
-  usp.megabosstime:
-    description: /메가보스시간 사용 권한
-    default: true
+    
   usp.tutorial.admin:
     description: /튜토리얼 관리자 권한
     default: op
+    
   usp.money.admin:
     description: /돈 설정 주기/차감 권한
     default: op
