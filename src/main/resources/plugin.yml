@@ -30,7 +30,6 @@ commands:
 
   배틀종료:
     description: Pixelmon endbattle
-    permission: usp.battle
 
   돈:
     description: 잔액/송금/순위
