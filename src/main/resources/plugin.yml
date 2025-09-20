@@ -8,6 +8,14 @@ softdepend: [Vault, Essentials, Citizens]
 commands:
   메가보스시간:
     description: Pixelmon megaboss checkspawns (무권한)
+    
+  전설시간:
+    description: checkspawns legendary (한글 별칭)
+    
+  튜토리얼:
+    description: 튜토리얼 시작/스킵/열기
+    aliases: [tutorial]
+    
   힐:
     description: Pixelmon pokeheal (한글)
 
@@ -62,15 +70,6 @@ commands:
     description: 손에 든 아이템을 전체 지급
     usage: /전체지급 <수량>
     permission: usp.giveall
-
-
-메가보스:
-  description: checkspawns megaboss (한글 별칭)
-전설시간:
-  description: checkspawns legendary (한글 별칭)
-  튜토리얼:
-    description: 튜토리얼 시작/스킵/열기
-    aliases: [tutorial]
 
 permissions:
   usp.draw:
