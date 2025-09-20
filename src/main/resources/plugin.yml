@@ -1,0 +1,117 @@
+name: UltimateServerPlugin2
+main: com.minkang.ultimate.Main
+version: 1.4.76
+api-version: 1.16
+author: MinGang
+softdepend: [Vault, Essentials, Citizens]
+
+commands:
+  메가보스시간:
+    description: Pixelmon megaboss checkspawns (무권한)
+    
+  전설시간:
+    description: checkspawns legendary (한글 별칭)
+    
+  튜토리얼:
+    description: 튜토리얼 시작/스킵/열기
+    aliases: [tutorial]
+    
+  힐:
+    description: Pixelmon pokeheal (한글)
+
+  개체값:
+    description: Pixelmon IVs (한글)
+
+  노력치:
+    description: Pixelmon EVs (한글)
+
+  알걸음:
+    description: Pixelmon eggsteps (한글)
+
+  배틀종료:
+    description: Pixelmon endbattle
+    permission: usp.battle
+
+  돈:
+    description: 잔액/송금/순위
+
+  수표:
+    description: 수표 발급(소지금 차감)
+
+  수리권:
+    description: 수리권
+    permission: usp.fix.admin
+
+  수리권_발급:
+    description: 수리권 발급
+    permission: usp.fix.admin
+
+  야투:
+    description: 야간투시
+
+  상점:
+    description: 상점 열기/관리
+    usage: /상점 [열기|생성|삭제|추가삭제|연동|해제|목록|리로드] ...
+
+  기본템:
+    description: 기본템 받기/설정/초기화
+    usage: /기본템 [설정|초기화 <닉>]
+
+  추첨:
+    description: 랜덤 추첨
+    permission: usp.draw
+
+  전체지급:
+    description: 손에 든 아이템을 전체 지급
+    usage: /전체지급 <수량>
+    permission: usp.giveall
+
+permissions:
+  usp.draw:
+    description: 추첨 명령 (OP 전용)
+    default: op
+
+  usp.giveall:
+    description: 전체지급 명령 (OP 전용)
+    default: op
+
+  usp.kit.admin:
+    description: 기본템 관리 (설정/초기화)
+    default: op
+
+  usp.kit.use:
+    description: 기본템 받기
+    default: true
+
+  usp.shop.open:
+    description: /상점 열기 <상점키> (OP 전용)
+    default: op
+
+  usp.shop.admin:
+    description: 상점 관리 권한(생성/삭제/추가삭제/연동/리로드)
+    default: op
+
+  usp.shop.rightopen:
+    description: /우클릭상점 사용자 권한(선택)
+    default: true
+
+  usp.battle:
+    description: /배틀종료 권한
+    default: op
+
+  usp.fix.admin:
+    description: 수리권/수리권 발급 관리 권한
+    default: op
+
+  usp.legendarytime:
+    description: /전설시간 사용 권한
+    default: true
+  usp.megabosstime:
+    description: /메가보스시간 사용 권한
+    default: true
+  usp.tutorial.admin:
+    description: /튜토리얼 관리자 권한
+    default: op
+  usp.money.admin:
+    description: /돈 설정 주기/차감 권한
+    default: op
