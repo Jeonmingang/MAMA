@@ -239,7 +239,7 @@ if ("연동".equalsIgnoreCase(sub)) {
             return true;
         }
 
-        if ("연동해제".equalsIgnoreCase(sub)) {
+        if ("연동해제".equalsIgnoreCase(sub) || "해제".equalsIgnoreCase(sub)) {
             if (!(sender instanceof Player)) { sender.sendMessage("§c플레이어만 사용 가능합니다."); return true; }
             Player p = (Player) sender;
             NPC npc = findTargetNPC(p, 6.0);

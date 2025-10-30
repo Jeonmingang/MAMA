@@ -131,21 +131,66 @@ public class ShopGuiListener implements Listener {
 
         if (right){ // SELL
             if (!sellEnabled){ p.sendMessage(ChatColor.RED + "판매가 비활성화된 항목입니다."); return; }
-            // count player's items with same type (ignoring lore/nbt to avoid false negatives)
-            Material mat = clicked.getType();
-            int have = countItems(p.getInventory(), mat);
-            if (shift) { qty = have; }
-            if (have < qty){ p.sendMessage(ChatColor.RED + "판매 수량이 부족합니다. 보유: " + have); return; }
-            removeItems(p.getInventory(), mat, qty);
-            double total = (sellPrice / unit) * qty;
-            if (econ == null){ p.sendMessage(ChatColor.RED + "Vault 연동이 없습니다."); return; }
-            econ.depositPlayer(p, total);
-            p.sendMessage(ChatColor.GREEN + "" + qty + "개 판매 ( +" + total + " )");
-            return;
+            // 판매는 '아이템 이름과 로어'가 모두 같은 아이템만 인정
+            ItemStack baseForSell = itemSec.getItemStack("item");
+            if (baseForSell != null){
+                int have = countItems(p.getInventory(), baseForSell);
+                if (shift) { qty = have; }
+                if (have < qty){ p.sendMessage(ChatColor.RED + "판매 수량이 부족합니다. 보유: " + have); return; }
+                removeItems(p.getInventory(), baseForSell, qty);
+                double total = (sellPrice / unit) * qty;
+                if (econ == null){ p.sendMessage(ChatColor.RED + "Vault 연동이 없습니다."); return; }
+                econ.depositPlayer(p, total);
+                p.sendMessage(ChatColor.GREEN + "" + qty + "개 판매 ( +" + total + " )");
+                return;
+            } else {
+                // 안전장치: 설정에 원본 아이템이 없으면 기존 동작(동일 재질)으로 처리
+                Material mat = clicked.getType();
+                int have = countItems(p.getInventory(), mat);
+                if (shift) { qty = have; }
+                if (have < qty){ p.sendMessage(ChatColor.RED + "판매 수량이 부족합니다. 보유: " + have); return; }
+                removeItems(p.getInventory(), mat, qty);
+                double total = (sellPrice / unit) * qty;
+                if (econ == null){ p.sendMessage(ChatColor.RED + "Vault 연동이 없습니다."); return; }
+                econ.depositPlayer(p, total);
+                p.sendMessage(ChatColor.GREEN + "" + qty + "개 판매 ( +" + total + " )");
+                return;
+            }
         }
     }
 
-    private int countItems(PlayerInventory inv, Material mat){
+    
+    private boolean matchesForSell(org.bukkit.inventory.ItemStack invItem, org.bukkit.inventory.ItemStack expected){
+        if (invItem == null || expected == null) return false;
+        if (invItem.getType() != expected.getType()) return false;
+        org.bukkit.inventory.meta.ItemMeta a = invItem.getItemMeta();
+        org.bukkit.inventory.meta.ItemMeta b = expected.getItemMeta();
+        String an = (a != null && a.hasDisplayName()) ? a.getDisplayName() : null;
+        String bn = (b != null && b.hasDisplayName()) ? b.getDisplayName() : null;
+        java.util.List<String> al = (a != null && a.hasLore()) ? a.getLore() : null;
+        java.util.List<String> bl = (b != null && b.hasLore()) ? b.getLore() : null;
+        // 이름과 로어가 모두 동일해야만 판매 허용
+        return java.util.Objects.equals(an, bn) && java.util.Objects.equals(al, bl);
+    }
+    private int countItems(org.bukkit.inventory.PlayerInventory inv, org.bukkit.inventory.ItemStack expected){
+        int c = 0;
+        for (org.bukkit.inventory.ItemStack it : inv.getContents()){
+            if (matchesForSell(it, expected)) c += (it == null ? 0 : it.getAmount());
+        }
+        return c;
+    }
+    private void removeItems(org.bukkit.inventory.PlayerInventory inv, org.bukkit.inventory.ItemStack expected, int qty){
+        for (int i=0; i<inv.getSize() && qty>0; i++){
+            org.bukkit.inventory.ItemStack it = inv.getItem(i);
+            if (matchesForSell(it, expected)){
+                int take = Math.min(qty, it.getAmount());
+                it.setAmount(it.getAmount() - take);
+                if (it.getAmount() <= 0) inv.setItem(i, null);
+                qty -= take;
+            }
+        }
+    }
+private int countItems(PlayerInventory inv, Material mat){
         int c = 0;
         for (ItemStack it : inv.getContents()){
             if (it != null && it.getType() == mat) c += it.getAmount();
