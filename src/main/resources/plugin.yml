@@ -1,6 +1,6 @@
 name: UltimateServerPlugin2
 main: com.minkang.ultimate.Main
-version: 1.4.78
+version: 1.4.83
 api-version: 1.16
 author: MinGang
 softdepend: [Vault, Essentials, Citizens]
@@ -11,7 +11,6 @@ commands:
     
   전설시간:
     description: checkspawns legendary (한글 별칭)
-    
 
   힐:
     description: Pixelmon pokeheal (한글)
